@@ -56,7 +56,6 @@ use ProsperWorks\Endpoints\Endpoint;
  * @method static \ProsperWorks\Endpoints\Endpoint webhook($idOrSearch = null) You should probably use the {@link Webhooks} class instead.
  *
  * @todo write tests to verify all operations work as expected!! many options! :O
- * @package ProsperWorks
  * @author igorsantos07
  */
 abstract class CRM

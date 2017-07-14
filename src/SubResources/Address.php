@@ -5,8 +5,7 @@ use ProsperWorks\TranslateResource;
 /**
  * Address translator class.
  * @property string $address TM2 field; AKA Address line 1
- * @property string $suite   TM2 field; AKA Address line 2
- * @package ProsperWorks\SubResources
+ * @property string $suite   TM2 field; AKA Address line 2\SubResources
  * @author  igorsantos07
  */
 class Address

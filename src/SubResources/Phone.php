@@ -6,8 +6,7 @@ use PhalconRest\Models\UserNumbers;
 /**
  * Class Phone
  * @property string $simpleNumber Phone number without the extension, if any
- * @property string $extension
- * @package ProsperWorks\SubResources
+ * @property string $extension\SubResources
  * @author igorsantos07
  */
 class Phone extends Categorized

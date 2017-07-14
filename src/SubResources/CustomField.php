@@ -9,8 +9,7 @@ use ProsperWorks\TranslateResource;
  *
  * @property string $name      The field name
  * @property string $valueName The value name
- *
- * @package ProsperWorks\SubResources
+ *\SubResources
  * @author igorsantos07
  */
 class CustomField

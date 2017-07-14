@@ -36,7 +36,6 @@ use ProsperWorks\Resources\BareResource;
  * @see https://www.prosperworks.com/developer_api/related_items
  *
  * @todo see if it's possible to hide this inside Endpoint by abstracting it + anonymous class sorcery
- * @package ProsperWorks
  * @author igorsantos07
  */
 class RelatedEndpoint extends BaseEndpoint

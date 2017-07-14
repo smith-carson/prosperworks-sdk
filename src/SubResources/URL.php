@@ -3,8 +3,7 @@
 use PhalconRest\Models\UserUrls;
 
 /**
- * URL subresource. Is able to guess the category for Social URLs.
- * @package ProsperWorks\SubResources
+ * URL subresource. Is able to guess the category for Social URLs.\SubResources
  * @author igorsantos07
  */
 class URL extends Categorized

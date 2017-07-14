@@ -4,7 +4,6 @@ use ProsperWorks\Resources\BareResource;
 
 /**
  * Represents a CRM API Endpoint.
- * @package ProsperWorks
  * @author igorsantos07
  */
 class Endpoint extends BaseEndpoint

@@ -1,8 +1,7 @@
 <?php namespace ProsperWorks\SubResources;
 
 /**
- * Class Email
- * @package ProsperWorks\SubResources
+ * Class Email\SubResources
  * @author igorsantos07
  */
 class Email extends Categorized

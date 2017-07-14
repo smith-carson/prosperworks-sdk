@@ -4,7 +4,6 @@
  * Singleton class that defines Rate Limit rules, usable across Resources.
  * The default limits are specified at {@link DEFAULT_LIMITS} and used as default constructor argument.
  * Access it through {@link do}.
- * @package ProsperWorks
  */
 class RateLimit
 {

@@ -6,7 +6,6 @@ namespace ProsperWorks;
  * PW fields should be left public - thus, when casting into array/json they're shown.
  * Custom fields (such as used by your application) should be left as protected and listed in
  * {@link $altFields}, so they can be used by {@link __get()} to generate getters to be used around.
- * @package ProsperWorks
  * @author igorsantos07
  */
 trait TranslateResource

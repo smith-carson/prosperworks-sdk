@@ -8,8 +8,7 @@ use ProsperWorks\SubResources\URL;
 
 /**
  * Base class that is used to translate resources coming from the API.
- * Contains all base fields used throughout the API, as well as generic translation methods.
- * @package ProsperWorks\Resources
+ * Contains all base fields used throughout the API, as well as generic translation methods.\Resources
  * @author igorsantos07
  */
 class BareResource

@@ -8,7 +8,6 @@ use ProsperWorks\SubResources\URL;
 
 /**
  * Person resource object.
- * @package ProsperWorks
  * @author igorsantos07
  */
 class Person extends BareResource

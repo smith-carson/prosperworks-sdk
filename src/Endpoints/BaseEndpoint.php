@@ -13,7 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Provides normalization and HTTP request methods to real resources.
- * @package ProsperWorks
  * @author igorsantos07
  */
 abstract class BaseEndpoint extends Injectable

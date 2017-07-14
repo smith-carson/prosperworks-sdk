@@ -12,7 +12,6 @@ use ProsperWorks\Endpoints\BaseEndpoint;
  * method/resource, thus when you send different data for the same pair, it replaces what was there instead of adding
  * a second one.
  *
- * @package ProsperWorks
  * @see     https://prosperworks.zendesk.com/hc/en-us/articles/217214766-ProsperWorks-Webhooks
  * @author igorsantos07
  */
