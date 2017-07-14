@@ -3,15 +3,21 @@
     "description": "Unofficial (but pretty decent) SDK for the ProsperWorks CRM API",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://packagist.org/packages/igorsantos07/prosperworks",
     "authors": [
         {
             "name": "Igor Santos",
-            "email": "igorsantos07@gmail.com"
+            "email": "igorsantos07@gmail.com",
+            "homepage": "http://igorsantos.com.br"
         }
     ],
+    "support": {
+        "issues": "https://github.com/igorsantos07/prosperworks-sdk/issues",
+        "source": "https://github.com/igorsantos07/prosperworks-sdk"
+    },
 
     "autoload": {
-        "PSR-4": {
+        "psr-4": {
             "ProsperWorks\\": "src/"
         }
     },
