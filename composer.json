@@ -13,8 +13,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/igorsantos07/prosperworks-sdk/issues",
-        "source": "https://github.com/igorsantos07/prosperworks-sdk"
+        "issues": "https://github.com/smith-carson/prosperworks-sdk/issues",
+        "source": "https://github.com/smith-carson/prosperworks-sdk"
     },
 
     "autoload": {
