@@ -3,6 +3,7 @@
 use GuzzleHttp\Exception\ClientException;
 use Phalcon\Crypt;
 use PhalconRest\Exception\HTTPException;
+use ProsperWorks\Endpoints\BaseEndpoint;
 
 /**
  * Webhooks subscription in the ProsperWorks API. Basically, a syntatic sugar for the "/webhooks" endpoint.

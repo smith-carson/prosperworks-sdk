@@ -1,8 +1,7 @@
-<?php
-
-namespace ProsperWorks;
+<?php namespace ProsperWorks\Endpoints;
 
 use GuzzleHttp\Client;
+use ProsperWorks\Resources\BareResource;
 
 /**
  * References related resource calls.
@@ -25,14 +24,14 @@ use GuzzleHttp\Client;
  *   CRM::leads()->related($id)->delete($subId, $type) // DELETE leads/{id}/related { resource: { $id, $type } }
  * </code>
  *
- * @method Resources\BareResource|Resources\BareResource[] companies()
- * @method Resources\BareResource|Resources\BareResource[] leads()
- * @method Resources\BareResource|Resources\BareResource[] opportunities()
- * @method Resources\BareResource|Resources\BareResource[] people()
- * @method Resources\BareResource|Resources\BareResource[] users()
- * @method Resources\BareResource|Resources\BareResource[] tasks()
- * @method Resources\BareResource|Resources\BareResource[] projects()
- * @method Resources\BareResource|Resources\BareResource[] activities()
+ * @method BareResource|BareResource[] companies()
+ * @method BareResource|BareResource[] leads()
+ * @method BareResource|BareResource[] opportunities()
+ * @method BareResource|BareResource[] people()
+ * @method BareResource|BareResource[] users()
+ * @method BareResource|BareResource[] tasks()
+ * @method BareResource|BareResource[] projects()
+ * @method BareResource|BareResource[] activities()
  *
  * @see https://www.prosperworks.com/developer_api/related_items
  *
@@ -56,7 +55,7 @@ class RelatedEndpoint extends BaseEndpoint
     /**
      * Retrieves all relationships for the current model.
      * To list only a specific type, use one of the magic methods, calling the resource type you want (i.e. <code>CRM::leads()->related($id)->tasks()</code>).
-     * @return Resources\BareResource[]
+     * @return BareResource[]
      */
     public function all()
     {
@@ -67,7 +66,7 @@ class RelatedEndpoint extends BaseEndpoint
      * Creates a new relation.
      * @param int    $id   Related object ID.
      * @param string $type Related object type. One of the CRM::RES_* constants.
-     * @return Resources\BareResource
+     * @return BareResource
      */
     public function create(int $id, string $type)
     {
@@ -90,7 +89,7 @@ class RelatedEndpoint extends BaseEndpoint
      * @example CRM::leads()->related($id)->tasks()
      * @param $relatedType
      * @param $params
-     * @return Resources\BareResource[]
+     * @return BareResource[]
      */
     public function __call($relatedType, $params)
     {

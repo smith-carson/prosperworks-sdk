@@ -1,8 +1,8 @@
-<?php
-
-namespace ProsperWorks;
+<?php namespace ProsperWorks;
 
 use GuzzleHttp\Client;
+use ProsperWorks\Endpoints\BaseEndpoint;
+use ProsperWorks\Endpoints\Endpoint;
 
 /**
  * CRM API entry-point.
@@ -45,15 +45,15 @@ use GuzzleHttp\Client;
  * @method static object[] projects()
  * @method static object[] activities()
  * @method static object[] webhooks() You should probably use the {@link Webhooks} class instead.
- * @method static \ProsperWorks\Endpoint company($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint lead($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint opportunity($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint person($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint user($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint task($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint project($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint activity($idOrSearch = null)
- * @method static \ProsperWorks\Endpoint webhook($idOrSearch = null) You should probably use the {@link Webhooks} class instead.
+ * @method static \ProsperWorks\Endpoints\Endpoint company($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint lead($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint opportunity($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint person($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint user($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint task($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint project($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint activity($idOrSearch = null)
+ * @method static \ProsperWorks\Endpoints\Endpoint webhook($idOrSearch = null) You should probably use the {@link Webhooks} class instead.
  *
  * @todo write tests to verify all operations work as expected!! many options! :O
  * @package ProsperWorks
@@ -126,7 +126,7 @@ abstract class CRM
      * @see Resource::__invoke()
      * @param string $name The resource name; if plural gives you the list of entries, if singular, the Endpoint object.
      * @param array  $args See {@link Endpoint::__invoke()} for details on this.
-     * @return Endpoint|object|object[]
+     * @return Endpoints\Endpoint|object|object[]
      */
     public static function getResource($name, array $args = null)
     {

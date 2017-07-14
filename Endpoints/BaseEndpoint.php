@@ -1,12 +1,13 @@
-<?php namespace ProsperWorks;
+<?php namespace ProsperWorks\Endpoints;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
 use Phalcon\Di\Injectable;
+use ProsperWorks\CRM;
+use ProsperWorks\RateLimit;
 use ProsperWorks\Resources\BareResource;
-use ProsperWorks\SubResource\CustomField;
 use PhalconRest\Util\Inflector;
 use Psr\Http\Message\ResponseInterface;
 
