@@ -2,10 +2,6 @@
     "name": "igorsantos07/prosperworks",
     "description": "Unofficial (but pretty decent) SDK for the ProsperWorks CRM API",
     "type": "library",
-    "require": {
-        "guzzlehttp/guzzle": "^6.3",
-        "php": "~7.0"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -13,5 +9,16 @@
             "email": "igorsantos07@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+
+    "autoload": {
+        "PSR-4": {
+            "ProsperWorks\\": "src/"
+        }
+    },
+
+    "minimum-stability": "dev",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3",
+        "php": "~7.0"
+    }
 }
