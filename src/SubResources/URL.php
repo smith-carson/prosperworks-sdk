@@ -1,7 +1,5 @@
 <?php namespace ProsperWorks\SubResources;
 
-use PhalconRest\Models\UserUrls;
-
 /**
  * URL subresource. Is able to guess the category for Social URLs.\SubResources
  * @author igorsantos07
@@ -54,30 +52,5 @@ class URL extends Categorized
 
         parent::__construct($category);
         $this->url = $url;
-    }
-
-    function getModelCategory(): string
-    {
-        switch ($this->category) {
-            case self::SOCIAL_LINKEDIN:
-            case self::SOCIAL_TWITTER:
-            case self::SOCIAL_GOOGLE_PLUS:
-            case self::SOCIAL_FACEBOOK:
-            case self::SOCIAL_YOUTUBE:
-            case self::SOCIAL_QUORA:
-            case self::SOCIAL_FOURSQUARE:
-            case self::SOCIAL_KLOUT:
-            case self::SOCIAL_GRAVATAR:
-                return UserUrls::TYPE_SOCIAL;
-
-            case self::WORK:
-                return UserUrls::TYPE_WORK;
-
-            case self::PERSONAL:
-                return UserUrls::TYPE_PERSONAL;
-
-            default:
-                return UserUrls::TYPE_OTHER;
-        }
     }
 }

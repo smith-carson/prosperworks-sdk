@@ -1,6 +1,7 @@
 {
     "name": "igorsantos07/prosperworks",
     "description": "Unofficial (but pretty decent) SDK for the ProsperWorks CRM API",
+    "keywords": ["prosperworks","crm","sdk","api-sdk","guzzle"],
     "type": "library",
     "license": "MIT",
     "homepage": "https://packagist.org/packages/igorsantos07/prosperworks",
@@ -22,9 +23,10 @@
         }
     },
 
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
+        "php": "^7.0",
         "guzzlehttp/guzzle": "^6.3",
-        "php": "~7.0"
+        "doctrine/inflector": "^1.1"
     }
 }

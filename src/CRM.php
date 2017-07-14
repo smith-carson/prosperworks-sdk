@@ -1,7 +1,7 @@
 <?php namespace ProsperWorks;
 
+use Doctrine\Common\Inflector\Inflector;
 use GuzzleHttp\Client;
-use ProsperWorks\Endpoints\BaseEndpoint;
 use ProsperWorks\Endpoints\Endpoint;
 
 /**
@@ -55,7 +55,7 @@ use ProsperWorks\Endpoints\Endpoint;
  * @method static \ProsperWorks\Endpoints\Endpoint activity($idOrSearch = null)
  * @method static \ProsperWorks\Endpoints\Endpoint webhook($idOrSearch = null) You should probably use the {@link Webhooks} class instead.
  *
- * @todo write tests to verify all operations work as expected!! many options! :O
+ * @todo   write tests to verify all operations work as expected!! many options! :O
  * @author igorsantos07
  */
 abstract class CRM
@@ -72,26 +72,16 @@ abstract class CRM
     const RES_PROJECT     = 'Project';
     const RES_ACTIVITY    = 'Activity';
 
-    /** Spits not debug info */
-    const DEBUG_NONE = 0;
-    /** Prints the HTTP Verb + URI. Useful to see if requests are happening */
-    const DEBUG_BASIC = 1;
-    /** Prints HTTP Verb, URI and Payload. "Did I send the request the right way?" */
-    const DEBUG_COMPLETE = 2;
-
-    protected static $debugLevel = self::DEBUG_NONE;
-
     public static function client()
     {
         static $client;
         if (!$client) {
-            $config = \Phalcon\Di::getDefault()->get('config')['prosperworks'];
             $client = new Client([
                 'base_uri' => 'https://api.prosperworks.com/developer_api/v1/',
                 'headers' => [
                     'X-PW-Application' => 'developer_api',
-                    'X-PW-AccessToken' => $config['token'],
-                    'X-PW-UserEmail' => $config['email'],
+                    'X-PW-UserEmail' => Config::email(),
+                    'X-PW-AccessToken' => Config::token(),
                     'Content-Type' => 'application/json'
                 ]
             ]);
@@ -102,22 +92,6 @@ abstract class CRM
     public static function __callStatic($name, $args)
     {
         return static::getResource($name, $args);
-    }
-
-    /**
-     * Gets/sets the debug level.
-     * Doesn't do anything by itself, but serves as central repository of the debug flag for
-     * the various ProsperWorks scripts.
-     * @param int|null $level One of the DEBUG_* constants
-     * @return int
-     */
-    public static function debugLevel(int $level = null)
-    {
-        if (is_null($level)) {
-            return self::$debugLevel;
-        } else {
-            return self::$debugLevel = $level;
-        }
     }
 
     /**
@@ -137,7 +111,7 @@ abstract class CRM
                 throw new \BadMethodCallException('Whoops, you got only one account to find(). Did you mean "users"?');
         }
 
-        $singular = BaseEndpoint::inflector()->singularize($name);
+        $singular = Inflector::singularize($name);
         $resource = new Endpoint($singular, static::client());
 
         if ($name == $singular) {
@@ -151,33 +125,31 @@ abstract class CRM
 
     /**
      * Returns an ID-indexed list of internal fields, instead of the plain API list.
-     * @param string     $resource   camelCased, singular resource name, such as: customFieldDefinition, contactType,
-     *                               customerSource, activityType, leadStatus, lossReason, pipeline, pipelineState, team
-     * @param int|string $search     If given, will look for the said ID/Value and return the correspondant Value/ID
-     * @param bool       $detailed   If true will return an associative array with details instead of simply the name
+     * @param string     $resource camelCased, singular resource name, such as: customFieldDefinition, contactType,
+     *                             customerSource, activityType, leadStatus, lossReason, pipeline, pipelineState, team
+     * @param int|string $search   If given, will look for the said ID/Value and return the correspondant Value/ID
+     * @param bool       $detailed If true will return an associative array with details instead of simply the name
      * @return object[]|object|string|int|null If no search key is given, returns the array, indexed by IDs. If search
-     *                               is given could return either the int ID if a value is asked, a string/object if the
-     *                               ID is given, or null if nothing is found.
+     *                             is given could return either the int ID if a value is asked, a string/object if the
+     *                             ID is given, or null if nothing is found.
      * @todo the $search argument could be removed to simplify this method, if there's only one usage for it in the end: CustomField::__construct
      */
     public static function fieldList(string $resource, $search = null, bool $detailed = false)
     {
-        /** @var \Phalcon\Cache\BackendInterface $cache */
-        $cache = \Phalcon\Di::getDefault()->get('cache');
         $keyBase = "prosperworks::$resource::";
-        $key = $keyBase . ($detailed? 'details' : 'list');
+        $key = $keyBase . ($detailed ? 'details' : 'list');
 
         $lifetime = 60 * 60; //one hour at least
-        $array = cacheGetSet($cache, $key, function() use ($cache, $keyBase, $resource, $detailed, $lifetime) {
-            $list = cacheGetSet($cache, "{$keyBase}raw", function() use ($resource) {
+        $array = Config::cacheGetSet($key, function () use ($keyBase, $resource, $detailed, $lifetime) {
+            $list = Config::cacheGetSet("{$keyBase}raw", function () use ($resource) {
                 //it's good to cache the raw response as well as list and detailed responses are generated by demand
                 return CRM::getResource($resource)->all();
             }, $lifetime);
 
-            $result = array_column($list, $detailed? null : 'name', 'id');
+            $result = array_column($list, $detailed ? null : 'name', 'id');
 
             if ($detailed && $resource == 'customFieldDefinition') {
-                array_walk($result, function(&$field) {
+                array_walk($result, function (&$field) {
                     if (isset($field->options) && $field->options) {
                         $field->options = array_column($field->options, 'name', 'id');
                     }
@@ -192,7 +164,7 @@ abstract class CRM
                 return $array[$search] ?? null;
             } else {
                 if ($detailed) {
-                    return array_filter($array, function($f) use ($search) { return $f->name == $search; }) ?? null;
+                    return array_filter($array, function ($f) use ($search) { return $f->name == $search; }) ?? null;
                 } else {
                     //if the search key is a string we got to flip it first
                     return array_flip($array)[$search] ?? null;
@@ -208,9 +180,8 @@ abstract class CRM
      * @param string $str
      * @return string
      */
-    public static function tagify(string $str):string
+    public static function tagify(string $str): string
     {
         return strtolower(substr($str, 0, CRM::MAX_TAG_LENGTH));
     }
-
 }

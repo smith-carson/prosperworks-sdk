@@ -1,7 +1,7 @@
 <?php namespace ProsperWorks\SubResources;
 
 /**
- * Class for simple resources that have categories.\SubResources
+ * Class for simple resources that have categories.
  * @author igorsantos07
  */
 abstract class Categorized
@@ -20,11 +20,5 @@ abstract class Categorized
     public function __construct($category) {
         $this->category = $category;
     }
-
-    /**
-     * Should return the correspondent BaseModel category constant.
-     * @return string
-     */
-    abstract function getModelCategory(): string;
 
 }

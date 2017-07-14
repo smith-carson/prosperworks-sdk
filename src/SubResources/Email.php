@@ -19,14 +19,4 @@ class Email extends Categorized
         parent::__construct($category);
         $this->email = $email;
     }
-
-    /**
-     * Emails aren't categorized in TM2.
-     * @deprecated
-     * @return string
-     */
-    function getModelCategory(): string
-    {
-        return $this->category;
-    }
 }

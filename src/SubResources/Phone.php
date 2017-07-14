@@ -1,7 +1,6 @@
 <?php namespace ProsperWorks\SubResources;
 
 use ProsperWorks\TranslateResource;
-use PhalconRest\Models\UserNumbers;
 
 /**
  * Class Phone
@@ -38,16 +37,6 @@ class Phone extends Categorized
             list(, $this->simpleNumber, $this->extension) = $matches;
         } else {
             $this->simpleNumber = $number;
-        }
-    }
-
-    function getModelCategory(): string
-    {
-        switch ($this->category) {
-            case self::MOBILE:  return UserNumbers::TYPE_MOBILE;
-            case self::WORK:    return UserNumbers::TYPE_WORK;
-            case self::HOME:    return UserNumbers::TYPE_HOME;
-            default:            return UserNumbers::TYPE_OTHER;
         }
     }
 }

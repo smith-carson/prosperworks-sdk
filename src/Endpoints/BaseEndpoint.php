@@ -1,21 +1,21 @@
 <?php namespace ProsperWorks\Endpoints;
 
+use Doctrine\Common\Inflector\Inflector;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
-use Phalcon\Di\Injectable;
+use ProsperWorks\Config;
 use ProsperWorks\CRM;
 use ProsperWorks\RateLimit;
 use ProsperWorks\Resources\BareResource;
-use PhalconRest\Util\Inflector;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Provides normalization and HTTP request methods to real resources.
  * @author igorsantos07
  */
-abstract class BaseEndpoint extends Injectable
+abstract class BaseEndpoint
 {
     /** How many requests to send at once at {@link requestMany}? Ten sounds like a healthy middle ground. */
     const CONCURRENCY_LIMIT = 10;
@@ -53,22 +53,12 @@ abstract class BaseEndpoint extends Injectable
         $this->client = $client ?? CRM::client();
     }
 
-    public static function inflector()
-    {
-        static $inflector;
-        if (!$inflector) {
-            $inflector = new Inflector;
-        }
-        return $inflector;
-    }
-
     protected static function normalizeName(string $resource)
     {
         if ($resource == 'account') {
-            return 'account'; //yep, this resource has no plural
+            return 'account'; //yep, this endpoint has no plural
         } else {
-            $inflector = static::inflector();
-            return $inflector->underscore($inflector->pluralize($resource));
+            return Inflector::tableize(Inflector::pluralize($resource));
         }
     }
 
@@ -102,9 +92,9 @@ abstract class BaseEndpoint extends Injectable
         if (is_array($path) || $path instanceof \Traversable) {
             return $this->requestMany($method, $path);
         } else {
-            if (CRM::debugLevel() >= CRM::DEBUG_COMPLETE) {
+            if (Config::debugLevel() >= Config::DEBUG_COMPLETE) {
                 echo strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n";
-            } elseif (CRM::debugLevel() >= CRM::DEBUG_BASIC) {
+            } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                 echo strtoupper($method) . " $this->uri/$path\n";
             }
             $response = $this->client->$method("$this->uri/$path", $options);
@@ -136,9 +126,9 @@ abstract class BaseEndpoint extends Injectable
                         $path = '';
                     }
 
-                    if (CRM::debugLevel() >= CRM::DEBUG_COMPLETE) {
+                    if (Config::debugLevel() >= Config::DEBUG_COMPLETE) {
                         echo strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n";
-                    } elseif (CRM::debugLevel() >= CRM::DEBUG_BASIC) {
+                    } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                         echo strtoupper($method) . " $this->uri/$path\n";
                     }
 

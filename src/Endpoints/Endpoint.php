@@ -18,7 +18,7 @@ class Endpoint extends BaseEndpoint
         return $this->request('post', '', ['json' => $data]);
     }
 
-    /**
+    /** @noinspection PhpInconsistentReturnPointsInspection
      * Creates a generator wrapper based on a list of entries, setting each as value of a "json" key in an array.
      * @param array|\Traversable $entries
      * @return \Generator

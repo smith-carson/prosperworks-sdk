@@ -1,8 +1,6 @@
 <?php namespace ProsperWorks;
 
 use GuzzleHttp\Exception\ClientException;
-use Phalcon\Crypt;
-use PhalconRest\Exception\HTTPException;
 use ProsperWorks\Endpoints\BaseEndpoint;
 
 /**
@@ -25,29 +23,20 @@ class Webhooks extends BaseEndpoint
     /** @var array Only those resources are available as notification emitters */
     const ENDPOINTS = ['lead', 'project', 'task', 'opportunity', 'company', 'person'];
 
-    protected $apiRoot;
-    protected $secret;
-    /** @var Crypt */
-    protected $crypt;
-
-    /** A string that will be encrypted with the project key, to be sent on every request */
-    private $plainSecret;
-
     /** A recognizable, fixed (and thus not encrypted) key, so we can find the secret on the payload */
     const SECRET_FIELD = 'password';
 
+    protected $apiRoot;
+    protected $secret;
+
     /**
      * Creates the basic Webhooks object.
-     * @param string      $plainSecret Plain secret string, to be encrypted and sent with the requests.
-     * @param string|null $root If empty, will use what's available in the config file (application.publicPortalUrl).
+     * @param string|null $root If empty, will use what's available in the {@link Config} class.
      *                          It must be HTTPS, or given without the protocol (what will prepend https:// to it).
      */
-    public function __construct(string $plainSecret, string $root = null)
+    public function __construct(string $root = null)
     {
         parent::__construct('webhook');
-
-        $this->plainSecret = $plainSecret;
-        $this->crypt = $this->di->get('crypt');
 
         if ($root) {
             $this->setRequestData($root);
@@ -64,12 +53,16 @@ class Webhooks extends BaseEndpoint
         if (!key_exists(self::SECRET_FIELD, $body)) {
             return null;
         }
-        return $this->crypt->decryptBase64($body[self::SECRET_FIELD]) == $this->plainSecret;
+        return Config::crypt()->decryptBase64($body[self::SECRET_FIELD]) == Config::secret();
     }
 
+    /**
+     * Configures the request data to be sent with Webhook settings.
+     * @param string|null $root If not given, defaults to {@link $defaultRoot}
+     */
     public function setRequestData(string $root = null)
     {
-        $root = $root ?? $this->di->get('config')['application']['publicPortalUrl'];
+        $root = $root ?? Config::defaultRoot();
 
         if (strpos($root, 'http:') === 0) {
             throw new \InvalidArgumentException("Webhook API root must be HTTPS: $root");
@@ -81,7 +74,7 @@ class Webhooks extends BaseEndpoint
         $this->apiRoot = "$root/v1";
 
         //we have to send a fixed secret key, as it's not encapsulated in a fixed key on the received payload
-        $this->secret = ['password' => $this->crypt->encryptBase64($this->plainSecret)];
+        $this->secret = ['password' => Config::crypt()->encryptBase64(Config::secret())];
     }
 
     /**
@@ -122,10 +115,8 @@ class Webhooks extends BaseEndpoint
             $list = is_array($list)? $list : [$list]; //if only one entry is returned, turn into a one-entry array
             return array_column($list, null, 'id');
         } catch (ClientException $e) {
-            if ($e->getCode() == 404) {
-                if ($id) {
-                    return [];
-                }
+            if ($e->getCode() == 404 && $id) {
+                return [];
             } else {
                 throw $e;
             }
