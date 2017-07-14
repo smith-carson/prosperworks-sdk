@@ -1,4 +1,4 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 class Relation
 {

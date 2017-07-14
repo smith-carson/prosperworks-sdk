@@ -1,7 +1,7 @@
 <?php namespace ProsperWorks\Endpoints;
 
 use GuzzleHttp\Client;
-use ProsperWorks\SubResource\Relation;
+use ProsperWorks\SubResources\Relation;
 
 class BatchRelatedEndpoint extends BaseEndpoint {
 

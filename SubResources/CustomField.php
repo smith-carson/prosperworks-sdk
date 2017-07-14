@@ -1,4 +1,4 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 use InvalidArgumentException as InvalidArg;
 use ProsperWorks\CRM;
@@ -10,7 +10,7 @@ use ProsperWorks\TranslateResource;
  * @property string $name      The field name
  * @property string $valueName The value name
  *
- * @package ProsperWorks\SubResource
+ * @package ProsperWorks\SubResources
  * @author igorsantos07
  */
 class CustomField
@@ -24,7 +24,7 @@ class CustomField
     //those two are just for consulting
     protected $name;
     protected $valueName;
-    protected $tm2fields = ['name','valueName'];
+    protected $altFields = ['name','valueName'];
 
     //and those, used for internal checks
     protected $type;

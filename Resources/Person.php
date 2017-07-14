@@ -1,10 +1,10 @@
 <?php
 namespace ProsperWorks\Resources;
 
-use ProsperWorks\SubResource\Address;
-use ProsperWorks\SubResource\Email;
-use ProsperWorks\SubResource\Phone;
-use ProsperWorks\SubResource\URL;
+use ProsperWorks\SubResources\Address;
+use ProsperWorks\SubResources\Email;
+use ProsperWorks\SubResources\Phone;
+use ProsperWorks\SubResources\URL;
 
 /**
  * Person resource object.

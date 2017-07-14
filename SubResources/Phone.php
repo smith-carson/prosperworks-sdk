@@ -1,4 +1,4 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 use ProsperWorks\TranslateResource;
 use PhalconRest\Models\UserNumbers;
@@ -7,7 +7,7 @@ use PhalconRest\Models\UserNumbers;
  * Class Phone
  * @property string $simpleNumber Phone number without the extension, if any
  * @property string $extension
- * @package ProsperWorks\SubResource
+ * @package ProsperWorks\SubResources
  * @author igorsantos07
  */
 class Phone extends Categorized
@@ -24,7 +24,7 @@ class Phone extends Categorized
 
     protected $simpleNumber;
     protected $extension;
-    protected $tm2fields = ['simpleNumber','extension'];
+    protected $altFields = ['simpleNumber','extension'];
 
     /**
      * Phone constructor.

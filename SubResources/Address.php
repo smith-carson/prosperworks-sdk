@@ -1,4 +1,4 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 use ProsperWorks\TranslateResource;
 
@@ -6,7 +6,7 @@ use ProsperWorks\TranslateResource;
  * Address translator class.
  * @property string $address TM2 field; AKA Address line 1
  * @property string $suite   TM2 field; AKA Address line 2
- * @package ProsperWorks\SubResource
+ * @package ProsperWorks\SubResources
  * @author  igorsantos07
  */
 class Address
@@ -23,7 +23,7 @@ class Address
     /** @var string First part of the street address, without the Suite part. */
     protected $address;
     protected $suite;
-    protected $tm2fields = ['address', 'suite'];
+    protected $altFields = ['address', 'suite'];
 
     /**
      * Address constructor.

@@ -1,10 +1,10 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 use PhalconRest\Models\UserUrls;
 
 /**
  * URL subresource. Is able to guess the category for Social URLs.
- * @package ProsperWorks\SubResource
+ * @package ProsperWorks\SubResources
  * @author igorsantos07
  */
 class URL extends Categorized

@@ -1,8 +1,8 @@
-<?php namespace ProsperWorks\SubResource;
+<?php namespace ProsperWorks\SubResources;
 
 /**
  * Class for simple resources that have categories.
- * @package ProsperWorks\SubResource
+ * @package ProsperWorks\SubResources
  * @author igorsantos07
  */
 abstract class Categorized
