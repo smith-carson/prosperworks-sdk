@@ -46,7 +46,17 @@ so on. That's information that rarely changes so it's safe to cache, making call
 resource with custom fields we would need to retrieve from the custom fields endpoint as well).
 
 ### 3. Debug mode
-TODO
+During import scripts and similar tasks it could be useful to peek into the network traffic and see if what you intended
+to do is being done correctly.
+You can enable `echo`'s of debug information from the library by calling `ProsperWorks\Config::debugLevel()`:
+
+- passing `ProsperWorks\Config::DEBUG_BASIC` will trigger some messages, such as "POST /people/search" so you know
+ which requests are being sent. It also warns on Rate limits being hit;
+- passing `ProsperWorks\Config::DEBUG_COMPLETE` does all above plus complete requests payload;
+- passing null, false, 0 or `ProsperWorks\Config::DEBUG_NONE` will stop printing messages.
+
+> This doesn't need to be done together with `Config::set()`; it can happen anywhere and will change behavior from that
+part on.
    
 ### Tip: "sandbox" account
 After a while, when implementing this library for the first time, we spoke with a support representative about the lack
