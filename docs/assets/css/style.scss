@@ -3,11 +3,19 @@
 
 @import "{{ site.theme }}";
 
+//wtf, sans-serif font for code??
 code {
-  //wtf, sans-serif font for code??
   font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, monospace;
 }
 
+//avoiding crazy black-on-white highlight for inline code
+code.highlighter-rouge {
+  color: black;
+  text-shadow: none;
+  background-color: #DDD;
+}
+
+//making the body larger, more readable, and with more horizontal space for code blocks
 body {
   font-size: 16px;
 }
