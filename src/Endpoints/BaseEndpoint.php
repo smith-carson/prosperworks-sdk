@@ -27,7 +27,7 @@ abstract class BaseEndpoint
     protected $client;
 
     /** @var bool If set to true will translate UNIX timestamps into DateTime objects */
-    public $dateObjects = true;
+    public $dateObjects = true; //FIXME: this should be on Config
 
     /**
      * @var array Lists all resources and their allowed methods. Useful for some types of validation.

@@ -216,7 +216,7 @@ remove these:
 <?php
 //this call is using a simple generator
 $thousandsOfTasksQueryResult = [...];
-$allTasks = CRM::tasks()->createMany(function() use ($thousandsOfTasksQueryResult) {
+$allTasks = CRM::task()->createMany(function() use ($thousandsOfTasksQueryResult) {
     foreach ($thousandsOfTasksQueryResult as $task) {
         yield [
             'name' => $task->name,
@@ -238,7 +238,7 @@ foreach ($allTasks as $response) {
 }
 
 //here we use a plain list of arguments: you have to unpack the array
-CRM::tasks()->delete(...$toDelete);
+CRM::task()->delete(...$toDelete);
 }
 ```
 
@@ -254,7 +254,7 @@ methods, with a list of ID + Type (or the `Relation` helper object), indexed by 
 use ProsperWorks\SubResources\Relation;
 
 $relClientsQuery = [...];
-CRM::tasks()->relatedBatch()->create(function() use ($relClientsQuery, $pwTaskId) {
+CRM::task()->relatedBatch()->create(function() use ($relClientsQuery, $pwTaskId) {
     foreach ($relatedClientsQuery as $client) {
         // this would generate an array of Relation() objects, indexed by the same ID
         // causes no error; this won't become a real array (thus, with keys conflicts)
@@ -273,7 +273,7 @@ of config/instances on one-off calls ;)
 
 ```php
 <?php
-$peopleRes = CRM::people();
+$peopleRes = CRM::person();
 $client = $peopleRes->find($clientId);
 $tags = array_merge($client->tags, 'new tag');
 $peopleRes->edit($clientId, compact('tags'));
@@ -285,10 +285,126 @@ allowing for new operations shortly after the limit is released. That emits some
 [Debug mode](#3-debug-mode) is on. This is specially useful for [Batch operations](#batch-operations).
 
 ## Response objects
-TODO: include on samples
+Most (all?) responses will be a `BareResource` object, or a list of those. The biggest advantage is that class's
+"translation" capabilities: it makes some parts of the payload easier to use by leveraging Objects with simpler /
+predictable structures, or with some data validation / translation under the hood (AKA [SubResources](#subresources)).
+
+- most date fields (date_created, due_date, date_last_contacted, ...) will turn from UNIX Timestamps into `DateTime`
+  objects. _There's a not-really-working setting to disable that, on BareResource (see [#8](issue-8))_
+- a `contact_type` field will be generated with the name related to `contact_type_id`, if any
+- [Custom Fields](#custom-field) will generate two entries:
+  - `custom_fields_raw`, containing the original payload from the API
+  - `custom_fields`, containing a list of `CustomField` objects, indexed by field name
+- some other complex structures will also become SubResource objects, such as:
+  - address: [`Address`](#address)
+  - socials, websites: [`URL[]`](#url)
+  - phone_numbers: [`Phone[]`](#phone)
+
 
 ## SubResources
-TODO
+There are a couple of dependant objects that are not to be used directly on API calls, but make part of the main
+resources. Most of the times, those are inner documents inside the JSON payload. They're used on responses (see
+[Response Objects](#response-objects)), but they're also designed to make your calls easier, "translating" some
+information back and forth, and making sure you always follow the requested rules for those sub-documents.
+
+In special, a SubResource implementing the `TranslateResource` trait will allow read-access to some protected
+fields (listed in `$altFields`). In short, when you turn an object into an array on PHP (what we do to get the final
+JSON payload) it creates an array of all public fields. Thus, a `TranslateResource` is able to give read access to some
+"hidden" properties while not exposing that to the API. See the list below for behavior examples:
+
+### Address
+Accepts as the first argument either a complete line (a string called `street`, because that's how ProsperWorks does),
+or an array with two address lines (called `address` and `suite`). To change between those two formats a there's a
+"suite" separator (hint: if there's a "suite" on the suite part already, it won't be repeated ok?). The other arguments
+are pretty standard, such as city, postal code and so on.
+
+```php
+<?php
+$sherlock = new Address('221B Baker St. suite 2', 'London');
+// same as  new Address(['221B Baker St.', '2'], 'London');
+// same as  new Address(['221B Baker St.', 'suite 2'], 'London');
+echo $sherlock->street;  //'221B Baker St. suite 2'
+echo $sherlock->address; //'221B Baker St.'
+echo $sherlock->suite;   //'2'
+
+$nemo = new Address('42 Wallaby Way', 'Sydney');
+echo $nemo->street;  //'42 Wallaby Way'
+echo $nemo->address; //'42 Wallaby Way'
+echo $nemo->suite;   //null
+
+//and then, use at will:
+CRM::person()->create([
+    'name' => 'P. Sherman',
+    'address' => $nemo
+]);
+```
+
+### Relation
+This was [shown before](#batch-relationship-operations): it's a simple holder for `id` and `type`, no extra features.
+
+### Custom Field
+This is the biggest guy. It does the translation between a bare custom field specification (id + value, not really
+meaningful for humans) and actually readable information. The original field ID (same ID for the same field, even
+across different types of resources) is stored in `custom_field_definition_id`, together with the `value`. There's
+always a read-only `name` property, with the field's actual name, and if it's a list, a read-only string `valueName`
+will also be filled with the field's readable value.
+
+To create a Custom Field entry, you can use both the field ID or field name as the first argument, and either the value
+ID or string on the second place. Remember to double-check casing when you use a string instead of the IDs, though!
+
+The following example displays both how to use the class and how it's returned in the SDK responses:
+```php
+<?php
+$person = CRM::person()->create([
+    'name' => 'John Doe',
+    'custom_fields' => [
+        new CustomField('Alias', 'Johnny Doe')
+    ]
+]);
+
+print_r($person);
+// ProsperWorks\Resources\BareResource Object (
+//     [id] => 12340904
+//     [name] => John Doe
+//     [custom_fields] => Array (
+//         [Alias] => ProsperWorks\SubResources\CustomField Object (
+//             [custom_field_definition_id] => 128903
+//             [value] => Johnny Doe
+//             [name:protected] => Alias
+//             [valueName:protected] =>
+//             [...]
+//         )
+//     )
+//     [custom_fields_raw] => Array (
+//         [0] => stdClass Object (
+//             [custom_field_definition_id] => 128903
+//             [value] => Johnny Doe
+//         )
+//         [1] => stdClass Object (
+//             [custom_field_definition_id] => 124953
+//             [value] =>
+//         )
+//     )
+//     [...]
+// )
+```
+
+### "Categorized" sub-resources
+All of these classes inherit from `Categorized`, giving them a `category` property and a couple of constants to use as
+values. If, on a child class, a constant is marked as "deprecated", it means it doesn't really work with that object.
+
+Their signature is the same: value as first argument, category as the second one.
+
+#### Email
+Simplest child: has an `email` property, together with the `category`.
+
+#### Phone
+The first argument is the string `number`. But the trick here is you can feed an extension by using something like this:
+"123-4444 x123", and it will get separated into two read-only fields: `simpleNumber` and `extension`.
+
+#### URL
+Feed a valid `url` as the first argument and a social URL `category` will be automatically filled, if any matches.
+For other cases, you can give the category manually as the second argument, as usual.
 
 Webhooks
 ========
@@ -299,6 +415,8 @@ TODO
 [REST API Docs]: https://www.prosperworks.com/developer_api
 [Webhook Docs]: https://prosperworks.zendesk.com/hc/en-us/articles/217214766-ProsperWorks-Webhooks
 [saving instances]: #i-dont-think-all-those-static-calls-are-performant
-[issue-7]: https://github.com/smith-carson/prosperworks-sdk/issues/7
 [Documentation for Related Items]: https://www.prosperworks.com/developer_api/related_items
 [Generator]: http://php.net/manual/en/language.generators.overview.php
+
+[issue-7]: https://github.com/smith-carson/prosperworks-sdk/issues/7
+[issue-8]: https://github.com/smith-carson/prosperworks-sdk/issues/8
