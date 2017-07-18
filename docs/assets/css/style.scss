@@ -7,3 +7,19 @@ code {
   //wtf, sans-serif font for code??
   font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, monospace;
 }
+
+body {
+  font-size: 16px;
+}
+
+#banner {
+  margin-right: -488px;
+}
+
+section {
+  $width: 700px;
+  width: $width;
+  @media print, screen and (max-width: 1060px) {
+    max-width: $width;
+  }
+}
