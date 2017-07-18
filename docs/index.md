@@ -63,7 +63,7 @@ You can enable `echo`'s of debug information from the library by calling `Prospe
 > This doesn't need to be done together with `Config::set()`; it can happen anywhere and will change behavior from that
 part on.
    
-## Tip: "sandbox" account
+### Tip: "sandbox" account
 After a while, when implementing this library for the first time, we spoke with a support representative about the lack
 of a sandbox environment. They suggested us to create a trial account and use that instead of a user on the paying 
 account, and mention to the Support that was being used to test-drive the API implementation - and thus, they would
@@ -81,11 +81,12 @@ this SDK. The Webhooks guide is still being worked on - that's why it's a KB yet
 <!-- spacer -->
 > On the following examples we'll consider the classes were imported in the current namespace.
 
-## API Communication
+API Communication
+=================
 With configurations in place, ProsperWorks API calls are done through a simple, fluent API. Most of the
 endpoints behave the same way, with special cases being the Account and most meta-data endpoints.
 
-### Common endpoints
+## Common endpoints
 Singular, empty static calls to `CRM` give an `Endpoint` object (see [saving instances]), that allows you to run all
 common operations:
 
@@ -128,7 +129,7 @@ $people = CRM::person(23);                  //same as CRM::person()->find(23)
 $people = CRM::person(['country' => 'US']); //same as CRM::person()->search(...)
 ```
 
-### Special cases: restricted endpoints
+## Special cases: restricted endpoints
 
 All meta-data resources (called _Secondary Resources_ on the docs), together with the `Account` endpoint, have only
 read access. There's no verification of valid operations yet (see [#7](issue-7)). Here's a list of those read-only
@@ -143,7 +144,7 @@ endpoints, accessible through the plural call (e.g. `CRM::activityTypes()`), exc
 - Pipelines
 - Pipeline Stages
 
-#### Meta-data shortcuts
+### Meta-data shortcuts
 
 As those endpoints are mostly lists, you can also access that data through the cacheable `CRM::fieldList()` method,
 which returns the information in a more organized fashion:
@@ -159,10 +160,10 @@ print_r($types);
 //     [126] => Former Customer
 // )
 
-echo CRM::fieldList('contactType', 524131); search argument
+echo CRM::fieldList('contactType', 524131); //search argument
 // prints "Potential Customer". That argument searches on both sides of the array
 
-$actTypes = CRM::fieldList('activityType', null, true); asks for "detailed response"
+$actTypes = CRM::fieldList('activityType', null, true); //asks for "detailed response"
 print_r($actTypes);
 // gives the entire resources, still indexed by ID
 //     [166] => stdClass Object
@@ -184,7 +185,7 @@ It's also worth noting that some fields are "translated" from the API into speci
 addresses, Custom Fields and more, so you'll probably never have to deal with the Custom Fields endpoint directly.
 More information about that on the [SubResources](#subresources) and [Response Objects](#response-objects) sections. 
 
-### Related Items
+## Related Items
 There's an unified API to created links between two resources. Thus, every Resource object has its own `related` method,
 to manipulate those links. As that's a very simple API, you can only list, create and delete relationships. Take a look
 on the [Documentation for Related Items] to see the relation limits - some resources allow for only one link, and not
@@ -200,7 +201,7 @@ $task_project = CRM::task()->related(22)->create(10, 'project'); //create one
 $task_project = CRM::task()->related(22)->delete(27, 'project'); //and remove
 ```
 
-### Batch Operations
+## Batch Operations
 It's also possible to run batch operations, using Guzzle's concurrency features to speed up with parallel calls.
 Some single-usage methods have a *Many counterpart, such as:
 - ` createMany()`: straightforward; instead of a payload, you pass a list of;
@@ -244,7 +245,7 @@ CRM::tasks()->delete(...$toDelete);
 A [generator] is specially useful in these cases as it will save you a lot of memory, by not storing a long list of
 payloads/requests in-memory.
 
-#### Batch Relationship operations
+### Batch Relationship operations
 Similar to batch API calls, it's also possible to run a bunch of relation changes. To do that, use `relatedBatch()`'s
 methods, with a list of ID + Type (or the `Relation` helper object), indexed by origin ID:
 
@@ -252,11 +253,11 @@ methods, with a list of ID + Type (or the `Relation` helper object), indexed by 
 <?php
 use ProsperWorks\SubResources\Relation;
 
-$relatedClientsQuery = [...];
-CRM::tasks()->relatedBatch()->create(function() use ($relatedClientsQuery, $pwTaskId) {
+$relClientsQuery = [...];
+CRM::tasks()->relatedBatch()->create(function() use ($relClientsQuery, $pwTaskId) {
     foreach ($relatedClientsQuery as $client) {
         // this would generate an array of Relation() objects, indexed by the same ID
-        // it causes no error, as this won't become a real array (and thus, have conflicting keys)
+        // causes no error; this won't become a real array (thus, with keys conflicts)
         yield new $pwTaskId => new Relation($client->id, 'company');
 
         // the following would also work
@@ -265,7 +266,7 @@ CRM::tasks()->relatedBatch()->create(function() use ($relatedClientsQuery, $pwTa
 });
 ```
 
-### I don't think all those static calls are performant
+## I don't think all those static calls are performant
 Indeed, on a very small scale, they might not be. You can always use the half-way object to run common operations, as
 when you're running a bunch of operations on the same endpoint. However, the static calls will save you from a couple
 of config/instances on one-off calls ;)
@@ -278,18 +279,19 @@ $tags = array_merge($client->tags, 'new tag');
 $peopleRes->edit($clientId, compact('tags'));
 ```
 
-### Rate limiting
+## Rate limiting
 There's also a RateLimit blocker built-in to the SDK, so it will `sleep()` a bit when it notices a limit would be hit,
 allowing for new operations shortly after the limit is released. That emits some notices on the CLI when
 [Debug mode](#3-debug-mode) is on. This is specially useful for [Batch operations](#batch-operations).
 
-### Response objects
+## Response objects
 TODO: include on samples
 
-### SubResources
+## SubResources
 TODO
 
-## Webhooks
+Webhooks
+========
 TODO
 
 [REST API Docs]: https://www.prosperworks.com/developer_api
