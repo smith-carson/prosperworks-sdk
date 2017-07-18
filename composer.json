@@ -4,7 +4,7 @@
     "keywords": ["prosperworks","crm","sdk","api-sdk","guzzle"],
     "type": "library",
     "license": "MIT",
-    "homepage": "https://packagist.org/packages/igorsantos07/prosperworks",
+    "homepage": "https://smith-carson.github.io/prosperworks-sdk",
     "authors": [
         {
             "name": "Igor Santos",

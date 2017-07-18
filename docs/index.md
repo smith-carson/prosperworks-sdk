@@ -2,13 +2,15 @@
 layout: default
 ---
 
-ProsperWorks (unofficial) PHP SDK
-=================================
+Introduction
+============
 
 At the time of implementation, there was no SDK for ProsperWorks, and we needed to do a bunch of operations to 
 transfer data from our old CRM and synchronize information with the other subsystems, so we designed some classes to
 encapsulate the API operations. It uses Guzzle, but ended up overgrowing and we turned into a standalone library.
 
+This project was originally written by [igorsantos07] and is now maintained by [smith-carson]
+([website](https://smithcarson.com)).
 
 Installation
 ============
@@ -69,22 +71,20 @@ of a sandbox environment. They suggested us to create a trial account and use th
 account, and mention to the Support that was being used to test-drive the API implementation - and thus, they would
 extend the trial of that solo account for as long as it was needed.
 
-Usage
-=====
+API Communication
+=================
 Most of the operations are done through the `\ProsperWorks\CRM` abstract class, and the resulting objects from it (you
 can consider it some sort of Factory class). The exception are Webhooks, that have a special Endpoint class to make it
 easier.
- 
+
+With configurations in place, ProsperWorks API calls are done through a simple, fluent API. Most of the
+endpoints behave the same way, with special cases being the Account and most meta-data endpoints.
+
 > Tip: **ProsperWorks API Documentation**  
 You may want to read the [REST API Docs] and [Webhook docs], to get an understanding of the inner pieces that make up
 this SDK. The Webhooks guide is still being worked on - that's why it's a KB yet.
 <!-- spacer -->
 > On the following examples we'll consider the classes were imported in the current namespace.
-
-API Communication
-=================
-With configurations in place, ProsperWorks API calls are done through a simple, fluent API. Most of the
-endpoints behave the same way, with special cases being the Account and most meta-data endpoints.
 
 ## Common endpoints
 Singular, empty static calls to `CRM` give an `Endpoint` object (see [saving instances]), that allows you to run all
@@ -294,6 +294,8 @@ Webhooks
 ========
 TODO
 
+[igorsantos07]: https://github.com/igorsantos07
+[smith-carson]: https://github.com/smith-carson
 [REST API Docs]: https://www.prosperworks.com/developer_api
 [Webhook Docs]: https://prosperworks.zendesk.com/hc/en-us/articles/217214766-ProsperWorks-Webhooks
 [saving instances]: #i-dont-think-all-those-static-calls-are-performant
