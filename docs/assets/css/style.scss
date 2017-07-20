@@ -9,7 +9,7 @@ code {
 }
 
 //avoiding crazy black-on-white highlight for inline code
-code.highlighter-rouge {
+dl code, code.highlighter-rouge {
   color: black;
   text-shadow: none;
   background-color: #DDD;

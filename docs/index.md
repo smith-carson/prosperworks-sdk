@@ -77,13 +77,12 @@ Most of the operations are done through the `\ProsperWorks\CRM` abstract class, 
 can consider it some sort of Factory class). The exception are Webhooks, that have a special Endpoint class to make it
 easier.
 
+> Tip: **ProsperWorks API Documentation**  
+You may want to read the [REST API Docs], to get an understanding of the inner pieces that make up this SDK.
+
 With configurations in place, ProsperWorks API calls are done through a simple, fluent API. Most of the
 endpoints behave the same way, with special cases being the Account and most meta-data endpoints.
 
-> Tip: **ProsperWorks API Documentation**  
-You may want to read the [REST API Docs] and [Webhook docs], to get an understanding of the inner pieces that make up
-this SDK. The Webhooks guide is still being worked on - that's why it's a KB yet.
-<!-- spacer -->
 > On the following examples we'll consider the classes were imported in the current namespace.
 
 ## Common endpoints
@@ -408,15 +407,93 @@ For other cases, you can give the category manually as the second argument, as u
 
 Webhooks
 ========
-TODO
+On the other hand, if you want to get updates from ProsperWorks, you have to setup _your_ endpoints for them to call
+with any changes that happen.
+
+> Tip: you may want to take a look on [Webhooks guide]; it's still being worked on - that's why it's still a KB article.
+
+## Available Events
+According to the documentation, there are three types of events that you can subscribe to:
+<dl>
+    <dt><code>Webhooks::EV_NEW</code></dt>     <dd>a new entry was created</dd>
+    <dt><code>Webhooks::EV_UPDATE</code></dt>  <dd>an entry got updated</dd>
+    <dt><code>Webhooks::EV_DELETE</code></dt>  <dd>an entry got deleted</dd>
+    <dt><code>Webhooks::EV_ALL</code></dt>     <dd>catch-all constant that will subscribe you to all events at once</dd>
+</dl>
+
+And these are available for any of the main endpoints, listed under `Webhooks::ENDPOINTS`:
+- Company
+- Lead
+- Opportunity
+- Person
+- Project
+- Task
+
+## How to interact with the webhooks
+There are a couple of methods on the `Webhooks` class, that you should use on your project's [REPL] or CLI tool when you
+configure them, or inside your Controller to manipulate the ProsperWorks calls:
+
+### To configure webhooks
+You must first instantiate the `Webhooks` object with the root path for your application's environment, otherwise it
+will use what's configured as default (if any) by `Config`. That in-place config ability will come in handy during
+[testing](#how-to-develop-with-webhooks).
+
+Then, you can use a couple of methods to interact with the ProsperWorks Webhooks API:
+<dl>
+    <dt><code>list(int $id = null)</code></dt>
+         <dd>Returns a list of webhook details, indexed by ID.</dd>
+    <dt><code>create(string $endpoint, $event = self::ALL)</code></dt>
+        <dd>Subscribes a new webhook for the given endpoint and event match, with the secret specified on `Config`. You
+            should use one of the CRM::RES_* constants for the first argument.</dd>
+    <dt><code>delete(int ...$id)</code></dt>
+        <dd>Removes one or more webhooks from the ProsperWorks pool.</dd>
+</dl>
+
+### To interpret webhook calls
+Every time a set event happens on one of the set endpoints, ProsperWorks's servers will make an HTTPS call to an address
+that is composed like this: `<root_path>/prosperworks_hooks/<endpoint>/<event>`. Your controllers should somehow be able
+to interpret that the way best suits your application, but most of that information is also repeated in the payload, so
+feel free to have a single catch-all action to work on it.
+
+#### The webhook payload
+The payload is plain and simple. It contains the affected/generated IDs (usually a single one, unless that's a batch
+operation), the affected endpoint and generated event, the webhook subscription ID, a timestamp and our secret.
+
+Before any further operation, you should verify, for security purposes, if the secret is correct. To do that, call
+`validateSecret()` with the payload, in array format. It will search for the secret, decrypt and verify it. Returns null
+when the secret is not present, or false if it's there but isn't valid.
+
+The next step, usually, would be for you to access the ProsperWorks API as usual to gather information on the created / 
+updated resource, and update your database accordingly, or remove whatever needs to be removed.
+  
+> It's worth saying that, with their current UI, every field change made by the user is automatically saved; that's good
+for their users, but every of those save calls will make a new webhook call, and that might overwhelm your server.   
+> Thus, a nice idea would be to have some sort of **queue system** to work on those changes, and maybe even a
+**deboncer** that could reduce repeated changes on the same resources - i.e. discarding payloads with the same endpoint,
+event and IDs that happened in a short period of time.
+
+## How to develop with webhooks
+An important fact here is that ProsperWorks demands all webhook calls to be encrypted, what means you must provide an
+HTTPS address for them. Besides that, your webserver must be openly accessible on the web. That might not be the most
+trivial settings for a development environment, right?
+
+Well, the tip is using [ngrok](http://ngrok.io) during development. You can run it pretty easily from the command-line
+and have it open a stable HTTPS tunnel, and give you it's URL; you feed that into the `Webhooks` object and setup new
+subscriptions that ProsperWorks can call when you make changes on their UI.  
+It's also possible to inspect the HTTP traffic using the Ngrok inspector; its URL is also displayed when you run it.
+That might come in handy so you don't need to edit fields a thousand of times to verify your code is working, as it's
+able to store and repeat calls it received. Neat, isn't it?
+
+
 
 [igorsantos07]: https://github.com/igorsantos07
 [smith-carson]: https://github.com/smith-carson
 [REST API Docs]: https://www.prosperworks.com/developer_api
-[Webhook Docs]: https://prosperworks.zendesk.com/hc/en-us/articles/217214766-ProsperWorks-Webhooks
+[Webhook Guide]: https://prosperworks.zendesk.com/hc/en-us/articles/217214766-ProsperWorks-Webhooks
 [saving instances]: #i-dont-think-all-those-static-calls-are-performant
 [Documentation for Related Items]: https://www.prosperworks.com/developer_api/related_items
 [Generator]: http://php.net/manual/en/language.generators.overview.php
+[REPL]: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 
 [issue-7]: https://github.com/smith-carson/prosperworks-sdk/issues/7
 [issue-8]: https://github.com/smith-carson/prosperworks-sdk/issues/8

@@ -21,7 +21,14 @@ class Webhooks extends BaseEndpoint
     const EV_ALL    = [self::EV_NEW, self::EV_UPDATE, self::EV_DELETE];
 
     /** @var array Only those resources are available as notification emitters */
-    const ENDPOINTS = ['lead', 'project', 'task', 'opportunity', 'company', 'person'];
+    const ENDPOINTS = [
+        CRM::RES_COMPANY,
+        CRM::RES_LEAD,
+        CRM::RES_OPPORTUNITY,
+        CRM::RES_PERSON,
+        CRM::RES_PROJECT,
+        CRM::RES_TASK,
+    ];
 
     /** A recognizable, fixed (and thus not encrypted) key, so we can find the secret on the payload */
     const SECRET_FIELD = 'password';
@@ -80,8 +87,8 @@ class Webhooks extends BaseEndpoint
     /**
      * Subscribes to a new notification $event, for the given $resource type.
      * Webhooks will ping at $apiRoot/api/prosperworks_hooks/$resource
-     * @param string       $endpoint What resource should we subscribe?
-     * @param string|array $event    One ore more events to subscribe to. Defaults to all events.
+     * @param string       $endpoint What resource should we subscribe? Use one of the CRM::RES_* constants.
+     * @param string|array $event    One ore more events to subscribe to. Use one of the EV_* constants.
      * @return int|int[] Id of the created event(s).
      */
     public function create(string $endpoint, $event = self::EV_ALL)
@@ -98,7 +105,7 @@ class Webhooks extends BaseEndpoint
         foreach ((array)$event as $ev) {
             $result = $this->request('post', '', ['json' => [
                 'target' => "$this->apiRoot/prosperworks_hooks/$endpoint/$ev",
-                'type' => $endpoint,
+                'type' => strtolower($endpoint),
                 'event' => $ev,
                 'secret' => $this->secret,
             ]]);
@@ -108,7 +115,7 @@ class Webhooks extends BaseEndpoint
         return (sizeof($response) == 1)? $response[0] : $response;
     }
 
-    public function list(int $id = null)
+    public function list(int $id = null): array
     {
         try {
             $list = $this->request('get', $id);
