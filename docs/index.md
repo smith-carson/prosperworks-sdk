@@ -57,10 +57,15 @@ During import scripts and similar tasks it could be useful to peek into the netw
 to do is being done correctly.
 You can enable `echo`'s of debug information from the library by calling `ProsperWorks\Config::debugLevel()`:
 
-- passing `ProsperWorks\Config::DEBUG_BASIC` will trigger some messages, such as "POST /people/search" so you know
- which requests are being sent. It also warns on Rate limits being hit;
-- passing `ProsperWorks\Config::DEBUG_COMPLETE` does all above plus complete requests payload;
-- passing null, false, 0 or `ProsperWorks\Config::DEBUG_NONE` will stop printing messages.
+<dl>
+    <dt><code>ProsperWorks\Config::DEBUG_BASIC</code></dt>
+        <dd>will trigger some messages, such as "POST /people/search" so you know which requests are being sent. It
+            also warns on Rate limits being hit.</dd>
+    <dt><code>ProsperWorks\Config::DEBUG_COMPLETE</code></dt>
+        <dd>does all above plus complete requests payload.</dd>
+    <dt><code>null</code>, <code>false</code>, <code>0</code> or <code>ProsperWorks\Config::DEBUG_NONE</code></dt>
+        <dd>will stop printing messages.</dd>
+</dl>
 
 > This doesn't need to be done together with `Config::set()`; it can happen anywhere and will change behavior from that
 part on.
@@ -203,9 +208,15 @@ $task_project = CRM::task()->related(22)->delete(27, 'project'); //and remove
 ## Batch Operations
 It's also possible to run batch operations, using Guzzle's concurrency features to speed up with parallel calls.
 Some single-usage methods have a *Many counterpart, such as:
-- ` createMany()`: straightforward; instead of a payload, you pass a list of;
-- `editMany()`: in this case, you got to pass a list of payloads, indexed by IDs.
-- `delete()` is special, as it can handle an arbitrary number of IDs. Its response will vary on the number of arguments.
+<dl>
+    <dt><code>createMany()</code></dt>
+        <dd>straightforward; instead of a payload, you pass a list of payloads</dd>
+    <dt><code>editMany()</code></dt>
+        <dd>in this case, you got to pass a list of payloads, indexed by IDs.</dd>
+    <dt><code>delete()</code></dt>
+        <dd>is special, as it can handle an arbitrary number of IDs. Its response will vary on the number of
+            arguments.</dd>
+</dl>
  
 You can use an array, Interator or [Generator] on these, and it will take care to run as much as 10 _(future: configurable)_ HTTP calls at the same time.
 
