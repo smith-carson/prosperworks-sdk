@@ -100,7 +100,7 @@ class RateLimit
     protected function rateLimit()
     {
         while ($this->willBeRateLimited()) {
-            if (CRM::debugLevel() >= CRM::DEBUG_BASIC) {
+            if (Config::debugLevel() >= Config::DEBUG_BASIC) {
                 echo ' [Rate limit reached. Waiting...] ';
             }
             usleep(333333);
