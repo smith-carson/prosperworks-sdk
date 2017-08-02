@@ -1,5 +1,5 @@
 {
-    "name": "igorsantos07/prosperworks",
+    "name": "smith-carson/prosperworks-sdk",
     "description": "Unofficial (but pretty decent) SDK for the ProsperWorks CRM API",
     "keywords": ["prosperworks","crm","sdk","api-sdk","guzzle"],
     "type": "library",
@@ -28,5 +28,8 @@
         "php": "^7.0",
         "guzzlehttp/guzzle": "^6.3",
         "doctrine/inflector": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
     }
 }
