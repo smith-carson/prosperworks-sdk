@@ -33,12 +33,13 @@ class CustomField
     /**
      * CustomField constructor.
      * @param string|int $idOrName
-     * @param string     $value
+     * @param string|array   $value
      * @param string     $resource (singular) Needed to distinguish between same-name fields available in different
      *                             resources, when the key given is the field name.
      */
-    public function __construct(string $idOrName, string $value = null, $resource = null)
+    public function __construct(string $idOrName, $value = null, $resource = null)
     {
+        $values = [];
         $field = CRM::fieldList('customFieldDefinition', $idOrName, true);
 
         switch (sizeof($field)) {
@@ -71,20 +72,36 @@ class CustomField
         if ($resource && !in_array($resource, $this->resources)) {
             throw new InvalidArg("You requested a field ($idOrName) that is not available for ($resource).");
         }
+        
+        if (is_array($value) && $this->type != "MultiSelect") {
+			throw new InvalidArg("Invalid multiple values for field $name that is not a MultiSelect field.");
+		}
+		
         if ($this->options && $value) {
-            if (is_numeric($value)) {
-                $this->value = $value;
-                $this->valueName = $this->options[$value] ?? false;
-            } else {
-                $this->valueName = $value;
-                $this->value = array_flip($this->options)[$value] ?? false;
-            }
-            
-            if (!$this->valueName || !$this->value) {
-                $name = ($resource ? "$resource." : '') . $idOrName;
-                $options = implode(', ', $this->options);
-                throw new InvalidArg("Invalid value ($value) for field $name. Valid options are: $options");
-            }
+			if (!is_array($value)) $value = [$value];
+			
+			foreach ($value as $val) {
+				if (!is_numeric($val)) {
+					$valueName = $val;
+					$val = array_flip($this->options)[$val] ?? false;
+				} else {
+					$valueName = $this->options[$val] ?? false;
+				}
+				
+				if (!$val || !$valueName) {
+					$name = ($resource ? "$resource." : '') . $idOrName;
+					$options = implode(', ', $this->options);
+					throw new InvalidArg("Invalid value ($value) for field $name. Valid options are: $options");
+				} else {
+					$values[] = $val;
+				}
+			}
+			
+            if ($this->type == "MultiSelect") {
+				$this->value = $values;
+			} else {
+				$this->value = $values[0];
+			}
         } else {
             $this->value = $value;
         }
