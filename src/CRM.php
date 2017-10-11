@@ -3,6 +3,8 @@
 use Doctrine\Common\Inflector\Inflector;
 use GuzzleHttp\Client;
 use ProsperWorks\Endpoints\Endpoint;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 
 /**
  * CRM API entry-point.
@@ -71,10 +73,20 @@ abstract class CRM
     const RES_TASK        = 'Task';
     const RES_PROJECT     = 'Project';
     const RES_ACTIVITY    = 'Activity';
-
+	
+	static $container;
+	
     public static function client()
     {
         static $client;
+        
+        self::$container = [];
+		$history = Middleware::history(self::$container);
+		
+		$stack = HandlerStack::create();
+		// Add the history middleware to the handler stack.
+		$stack->push($history);
+        
         if (!$client) {
             $client = new Client([
                 'base_uri' => 'https://api.prosperworks.com/developer_api/v1/',
@@ -83,7 +95,8 @@ abstract class CRM
                     'X-PW-UserEmail' => Config::email(),
                     'X-PW-AccessToken' => Config::token(),
                     'Content-Type' => 'application/json'
-                ]
+                ],
+                'handler' => $stack
             ]);
         }
         return $client;

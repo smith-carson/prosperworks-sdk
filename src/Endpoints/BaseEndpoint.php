@@ -10,6 +10,8 @@ use ProsperWorks\CRM;
 use ProsperWorks\RateLimit;
 use ProsperWorks\Resources\BareResource;
 use Psr\Http\Message\ResponseInterface;
+use Phalcon\Logger;
+use Phalcon\Logger\Adapter\File as FileLogger;
 
 /**
  * Provides normalization and HTTP request methods to real resources.
@@ -88,6 +90,8 @@ abstract class BaseEndpoint
      */
     protected function request(string $method, $path = '', array $options = [])
     {
+		$config = $this->di->get('config');
+		
         //TODO: replace with is_iterable() at PHP 7.1
         if (is_array($path) || $path instanceof \Traversable) {
             return $this->requestMany($method, $path);
@@ -97,7 +101,22 @@ abstract class BaseEndpoint
             } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                 echo strtoupper($method) . " $this->uri/$path\n";
             }
-            $response = $this->client->$method("$this->uri/$path", $options);
+            
+            try {
+				$response = $this->client->$method("$this->uri/$path", $options);
+			} catch (\RuntimeException $e) {
+				// Log the error and the last request info
+				$logger = new FileLogger($config['application']['loggingDir'] . date("d_m_y") . "-pwintegration.log");
+				$error = "Exception " . $e->getMessage() . "\n";
+				
+				$transaction = end(CRM::$container);
+				$error .= ( (string) $transaction['request']->getBody() ); // Hello World
+				foreach ($transaction['request']->getHeaders() as $header) {
+					$error .= print_r($header, true);
+				}
+				$logger->log("Sync exception: " . $error, Logger::INFO);
+			}
+			
             RateLimit::do()->pushRequest();
             return $this->processResponse($response);
         }

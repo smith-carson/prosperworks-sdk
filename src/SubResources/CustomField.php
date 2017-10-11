@@ -69,31 +69,38 @@ class CustomField
         $this->options = $field->options ?? [];
 
         //validating $resource and options, if available
-        if ($resource && !in_array($resource, $this->resources)) {
-            throw new InvalidArg("You requested a field ($idOrName) that is not available for ($resource).");
-        }
-        
         if (is_array($value) && $this->type != "MultiSelect") {
 			throw new InvalidArg("Invalid multiple values for field $name that is not a MultiSelect field.");
 		}
 		
+        if ($resource && !in_array($resource, $this->resources)) {
+            throw new InvalidArg("You requested a field ($idOrName) that is not available for ($resource).");
+        }
+        
         if ($this->options && $value) {
 			if (!is_array($value)) $value = [$value];
 			
 			foreach ($value as $val) {
 				if (!is_numeric($val)) {
-					$valueName = $val;
-					$val = array_flip($this->options)[$val] ?? false;
+					if ($val == "") {
+						$valueName = "";
+						$id = null;
+					} else {
+						$valueName = $val;
+						$id = array_flip($this->options)[$val] ?? false;
+					}
 				} else {
 					$valueName = $this->options[$val] ?? false;
+					$id = $val;
 				}
 				
-				if (!$val || !$valueName) {
+				if ( $valueName !== "" && (!$id || !$valueName) ) {
 					$name = ($resource ? "$resource." : '') . $idOrName;
 					$options = implode(', ', $this->options);
-					throw new InvalidArg("Invalid value ($value) for field $name. Valid options are: $options");
+					
+					throw new InvalidArg("Invalid value ($val) for field $name. Valid options are: $options");
 				} else {
-					$values[] = $val;
+					$values[] = $id;
 				}
 			}
 			
