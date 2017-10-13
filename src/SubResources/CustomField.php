@@ -19,7 +19,7 @@ class CustomField
     //those two are used by the PW API
     public $custom_field_definition_id;
     public $value;
-
+	
     //those two are just for consulting
     protected $name;
     protected $valueName;
@@ -113,5 +113,19 @@ class CustomField
             $this->value = $value;
         }
     }
-
+	
+	public function getValue() {
+		if (count($this->options) > 0) {
+			if ($this->type == "MultiSelect") {
+				$values = [];
+				foreach ($this->value as $val) {
+					$values[] = $this->options[$val];
+				}
+				return $values;
+			}
+			return $this->options[$this->value];
+		} else {
+			return $this->value;
+		}
+	}
 }

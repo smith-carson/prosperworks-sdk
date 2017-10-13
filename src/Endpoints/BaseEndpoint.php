@@ -90,9 +90,7 @@ abstract class BaseEndpoint
      */
     protected function request(string $method, $path = '', array $options = [])
     {
-		$config = $this->di->get('config');
-		
-        //TODO: replace with is_iterable() at PHP 7.1
+		//TODO: replace with is_iterable() at PHP 7.1
         if (is_array($path) || $path instanceof \Traversable) {
             return $this->requestMany($method, $path);
         } else {
@@ -106,7 +104,7 @@ abstract class BaseEndpoint
 				$response = $this->client->$method("$this->uri/$path", $options);
 			} catch (\RuntimeException $e) {
 				// Log the error and the last request info
-				$logger = new FileLogger($config['application']['loggingDir'] . date("d_m_y") . "-pwintegration.log");
+				$logger = new FileLogger('/tmp/' . date("d_m_y") . "-pwintegration.log");
 				$error = "Exception " . $e->getMessage() . "\n";
 				
 				$transaction = end(CRM::$container);
