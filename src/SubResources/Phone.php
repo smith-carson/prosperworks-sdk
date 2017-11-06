@@ -14,11 +14,11 @@ class Phone extends Categorized
 
     public $number;
 
-    const MOBILE = 'mobile';
-    const HOME = 'home';
+    const MOBILE = 'Mobile';
+    const HOME = 'Home';
 
     /** @deprecated */
-    const PERSONAL = 'personal';
+    const PERSONAL = 'Personal';
 
     protected $simpleNumber;
     protected $extension;

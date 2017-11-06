@@ -27,7 +27,7 @@
     "require": {
         "php": "^7.0",
         "guzzlehttp/guzzle": "^6.3",
-        "doctrine/inflector": "^1.1"
+        "doctrine/inflector": "^1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.2"

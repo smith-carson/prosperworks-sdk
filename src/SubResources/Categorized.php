@@ -9,9 +9,9 @@ abstract class Categorized
 
     public $category;
 
-    const WORK = 'work';
-    const PERSONAL = 'personal';
-    const OTHER = 'other';
+    const WORK = 'Work';
+    const PERSONAL = 'Personal';
+    const OTHER = 'Other';
 
     /**
      * Categorized subresource constructor.
