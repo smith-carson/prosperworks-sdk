@@ -39,7 +39,35 @@ class Endpoint extends BaseEndpoint
      */
     public function createMany($entries)
     {
-        return $this->request('post', $this->entriesJsonifier($entries));
+		// first extract the relations wich should be managed through a side request
+		$relations = [];
+		foreach ($entries as $entry) {
+			$tm2id = null;
+			
+			foreach ($entry['custom_fields'] as $customfield) {
+				if ($customfield->name == "TM2 ID") {
+					$tm2id = $customfield->getValue();
+					break;
+				}
+			}
+			
+			if (isset($entry['relations'])) {
+				$relations[$tm2id] = $entry['relations'];
+				unset($entry['relations']);
+			}
+		}
+		
+		$results = $this->request('post', $this->entriesJsonifier($entries));
+		
+		foreach ($results as $result) {
+			foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
+				if (!empty($relation['id'])) {
+					$this->related($result->id)->create($relation['id'], $relation['type']);
+				}
+			}
+		}
+		
+        return $results;
     }
 
     /**
@@ -107,7 +135,19 @@ class Endpoint extends BaseEndpoint
      */
     public function edit(int $id, array $data)
     {
-        return $this->request('put', $id, ['json' => $data]);
+		$relations = $data['relations'];
+					
+		unset($data['relations']);
+		
+		$result = $this->request('put', $id, ['json' => $data]);
+		
+		foreach ($relations as $relation) {
+			if (!empty($relation['id'])) {
+				$this->related($id)->create($relation['id'], $relation['type']);
+			}
+		}
+		
+        return $result;
     }
 
     /**
@@ -117,7 +157,32 @@ class Endpoint extends BaseEndpoint
      */
     public function editMany($entries)
     {
-        return $this->request('put', $this->entriesJsonifier($entries));
+		$relations = [];
+		foreach ($entries as $entry) {
+			$tm2id = null;
+			
+			foreach ($entry['custom_fields'] as $customfield) {
+				if ($customfield->name == "TM2 ID") {
+					$tm2id = $customfield->getValue();
+					break;
+				}
+			}
+			
+			if (isset($entry['relations'])) {
+				$relations[$tm2id] = $entry['relations'];
+				unset($entry['relations']);
+			}
+		}
+		
+        $results = $this->request('put', $this->entriesJsonifier($entries));
+        
+        foreach ($results as $result) {
+			foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
+				$this->related($result->id)->create($relation['id'], $relation['type']);
+			}
+		}
+		
+        return $results;
     }
 
     /**

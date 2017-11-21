@@ -37,7 +37,8 @@ class BatchRelatedEndpoint extends BaseEndpoint {
      */
     public function create($relations)
     {
-        return $this->requestMany('post', $this->listGenerator($relations));
+		//TODO: replace with is_iterable() at PHP 7.1
+		return $this->requestMany('post', $this->listGenerator($relations));
     }
 
     /**

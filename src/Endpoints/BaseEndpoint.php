@@ -91,11 +91,11 @@ abstract class BaseEndpoint
     protected function request(string $method, $path = '', array $options = [])
     {
 		//TODO: replace with is_iterable() at PHP 7.1
-        if (is_array($path) || $path instanceof \Traversable) {
+		if (is_array($path) || $path instanceof \Traversable) {
             return $this->requestMany($method, $path);
         } else {
             if (Config::debugLevel() >= Config::DEBUG_COMPLETE) {
-                echo strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n";
+                echo strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '');
             } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                 echo strtoupper($method) . " $this->uri/$path\n";
             }
@@ -104,7 +104,6 @@ abstract class BaseEndpoint
 				$response = $this->client->$method("$this->uri/$path", $options);
 			} catch (\RuntimeException $e) {
 				// Log the error and the last request info
-				$logger = new FileLogger('/tmp/' . date("d_m_y") . "-pwintegration.log");
 				$error = "Exception " . $e->getMessage() . "\n";
 				
 				$transaction = end(CRM::$container);
@@ -112,7 +111,7 @@ abstract class BaseEndpoint
 				foreach ($transaction['request']->getHeaders() as $header) {
 					$error .= print_r($header, true);
 				}
-				$logger->log("Sync exception: " . $error, Logger::INFO);
+				echo "Sync exception: " . $error;
 			}
 			
             RateLimit::do()->pushRequest();
@@ -130,7 +129,7 @@ abstract class BaseEndpoint
      */
     protected function requestMany(string $method, $paths)
     {
-        $requestGenerator = function ($uriList) use ($method) {
+		$requestGenerator = function ($uriList) use ($method) {
             foreach ($uriList as $path => $options) {
                 //verifying if the array is just a simple list of paths
                 if (is_integer($path) && !is_array($options)) {
@@ -138,11 +137,11 @@ abstract class BaseEndpoint
                     $options = [];
                 }
                 yield function () use ($method, $path, $options) {
-                    if ($method == 'post' && is_integer($path)) {
+					if ($method == 'post' && is_integer($path)) {
                         //if this is a post call, $path being an integer means plain array keys instead of IDs
                         $path = '';
                     }
-
+                    
                     if (Config::debugLevel() >= Config::DEBUG_COMPLETE) {
                         echo strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n";
                     } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
@@ -161,7 +160,7 @@ abstract class BaseEndpoint
                 RateLimit::do()->pushRequest();
                 $results[$index] = $this->processResponse($response);
             },
-            'rejected' => function (ClientException $error, $index) use (&$results) {
+            'rejected' => function (ServerException $error, $index) use (&$results) {
                 RateLimit::do()->pushRequest();
                 try {
                     $results[$index] = $this->processError($error);
