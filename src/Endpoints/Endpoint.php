@@ -15,7 +15,19 @@ class Endpoint extends BaseEndpoint
      */
     public function create(array $data)
     {
-        return $this->request('post', '', ['json' => $data]);
+		$relations = !empty($data['relations']) ? $data['relations'] : [];
+					
+		unset($data['relations']);
+		
+		$result = $this->request('post', '', ['json' => $data]);
+		
+		foreach ($relations as $relation) {
+			if (!empty($relation['id'])) {
+				$this->related($result->id)->create($relation['id'], $relation['type']);
+			}
+		}
+		
+        return $result;
     }
 
     /** @noinspection PhpInconsistentReturnPointsInspection
@@ -60,9 +72,11 @@ class Endpoint extends BaseEndpoint
 		$results = $this->request('post', $this->entriesJsonifier($entries));
 		
 		foreach ($results as $result) {
-			foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
-				if (!empty($relation['id'])) {
-					$this->related($result->id)->create($relation['id'], $relation['type']);
+			if (!empty($relations[$result->custom_fields['TM2 ID']->getValue()])) {
+				foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
+					if (!empty($relation['id'])) {
+						$this->related($result->id)->create($relation['id'], $relation['type']);
+					}
 				}
 			}
 		}
@@ -135,7 +149,7 @@ class Endpoint extends BaseEndpoint
      */
     public function edit(int $id, array $data)
     {
-		$relations = $data['relations'];
+		$relations = !empty($data['relations']) ? $data['relations'] : [];
 					
 		unset($data['relations']);
 		
@@ -177,8 +191,10 @@ class Endpoint extends BaseEndpoint
         $results = $this->request('put', $this->entriesJsonifier($entries));
         
         foreach ($results as $result) {
-			foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
-				$this->related($result->id)->create($relation['id'], $relation['type']);
+			if (!empty($relations[$result->custom_fields['TM2 ID']->getValue()])) {
+				foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
+					$this->related($result->id)->create($relation['id'], $relation['type']);
+				}
 			}
 		}
 		
