@@ -57,9 +57,11 @@ class Endpoint extends BaseEndpoint
 			$tm2id = null;
 			
 			foreach ($entry['custom_fields'] as $customfield) {
-				if ($customfield->name == "TM2 ID") {
-					$tm2id = $customfield->getValue();
-					break;
+				if (is_object($customfield)) {
+					if ($customfield->name == "TM2 ID") {
+						$tm2id = $customfield->getValue();
+						break;
+					}
 				}
 			}
 			
