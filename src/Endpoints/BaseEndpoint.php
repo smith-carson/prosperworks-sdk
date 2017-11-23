@@ -160,7 +160,7 @@ abstract class BaseEndpoint
                 RateLimit::do()->pushRequest();
                 $results[$index] = $this->processResponse($response);
             },
-            'rejected' => function (ServerException $error, $index) use (&$results) {
+            'rejected' => function ($error, $index) use (&$results) {
                 RateLimit::do()->pushRequest();
                 try {
                     $results[$index] = $this->processError($error);
