@@ -53,25 +53,29 @@ class Endpoint extends BaseEndpoint
     {
 		// first extract the relations wich should be managed through a side request
 		$relations = [];
-		foreach ($entries as $entry) {
-			$tm2id = null;
-			
-			foreach ($entry['custom_fields'] as $customfield) {
-				if (is_object($customfield)) {
-					if ($customfield->name == "TM2 ID") {
-						$tm2id = $customfield->getValue();
-						break;
+		$entriesGenerator = function($entries) use (&$relations) {
+			foreach ($entries as $entry) {
+				$tm2id = null;
+				
+				foreach ($entry['custom_fields'] as $customfield) {
+					if (is_object($customfield)) {
+						if ($customfield->name == "TM2 ID") {
+							$tm2id = $customfield->getValue();
+							break;
+						}
 					}
 				}
+				
+				if (isset($entry['relations'])) {
+					$relations[$tm2id] = $entry['relations'];
+					unset($entry['relations']);
+				}
+				
+				yield $entry;
 			}
-			
-			if (isset($entry['relations'])) {
-				$relations[$tm2id] = $entry['relations'];
-				unset($entry['relations']);
-			}
-		}
+		};
 		
-		$results = $this->request('post', $this->entriesJsonifier($entries));
+		$results = $this->request('post', $this->entriesJsonifier($entriesGenerator($entries)));
 		
 		foreach ($results as $result) {
 			if (!empty($relations[$result->custom_fields['TM2 ID']->getValue()])) {
