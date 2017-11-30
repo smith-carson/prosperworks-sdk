@@ -77,15 +77,15 @@ class Endpoint extends BaseEndpoint
 		
 		$results = $this->request('post', $this->entriesJsonifier($entriesGenerator($entries)));
 		
+		$pwlinkedRelations = [];
+		
 		foreach ($results as $result) {
 			if (!empty($relations[$result->custom_fields['TM2 ID']->getValue()])) {
-				foreach ($relations[$result->custom_fields['TM2 ID']->getValue()] as $relation) {
-					if (!empty($relation['id'])) {
-						$this->related($result->id)->create($relation['id'], $relation['type']);
-					}
-				}
+				$pwlinkedRelations[$result->id] = & $relations[$result->custom_fields['TM2 ID']->getValue()];
 			}
 		}
+		
+		$this->relatedBatch()->create($pwlinkedRelations);
 		
         return $results;
     }

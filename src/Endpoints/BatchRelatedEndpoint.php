@@ -25,7 +25,9 @@ class BatchRelatedEndpoint extends BaseEndpoint {
     {
         return (function ($relations) {
             foreach ($relations as $owner => $related) {
-                yield "$owner/related" => ['json' => ['resource' => (array)$related]];
+				foreach ($related as $r) {
+					yield "$owner/related" => ['json' => ['resource' => [ 'id' => $r['id'], 'type' => $r['type']]]];
+				}
             }
         })($relations);
     }
