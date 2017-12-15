@@ -123,7 +123,11 @@ class CustomField
 				}
 				return $values;
 			}
-			return $this->options[$this->value];
+			
+			if (!empty($this->value)) {
+				return $this->options[$this->value];
+			} else
+				return false;
 		} else {
 			return $this->value;
 		}
