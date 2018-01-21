@@ -111,7 +111,7 @@ abstract class BaseEndpoint
 				foreach ($transaction['request']->getHeaders() as $header) {
 					$error .= print_r($header, true);
 				}
-				echo "Sync exception: " . $error;
+				//file_put_contents("/tmp/pwsync.log","Sync exception: " . $error, FILE_APPEND);
 			}
 			
             RateLimit::do()->pushRequest();
@@ -147,7 +147,7 @@ abstract class BaseEndpoint
                     } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                         echo strtoupper($method) . " $this->uri/$path\n";
                     }
-
+					
                     return $this->client->{"{$method}Async"}("$this->uri/$path", $options);
                 };
             }
@@ -216,7 +216,7 @@ abstract class BaseEndpoint
      * @param ClientException $error
      * @return bool|mixed
      */
-    protected function processError(ClientException $error)
+    protected function processError($error)
     {
         return $this->processResponse($error->getResponse());
     }

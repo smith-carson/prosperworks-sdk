@@ -16,8 +16,8 @@ class RateLimit
 
     /** Information gathered from the support team, during a huge import script implementation. */
     const DEFAULT_LIMITS = [
-        6 => 100,
-        36 => 250
+        6 => 90,
+        36 => 200
     ];
 
     /**
@@ -103,7 +103,7 @@ class RateLimit
             if (Config::debugLevel() >= Config::DEBUG_BASIC) {
                 echo ' [Rate limit reached. Waiting...] ';
             }
-            usleep(333333);
+            sleep(1);
             $this->pushRequest(0);
         }
     }

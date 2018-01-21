@@ -80,7 +80,7 @@ class Endpoint extends BaseEndpoint
 		$pwlinkedRelations = [];
 		
 		foreach ($results as $result) {
-			if (!empty($relations[$result->custom_fields['TM2 ID']->getValue()])) {
+			if ( !empty($result->custom_fields['TM2 ID']) && !empty($relations[$result->custom_fields['TM2 ID']->getValue()]) ) {
 				$pwlinkedRelations[$result->id] = & $relations[$result->custom_fields['TM2 ID']->getValue()];
 			}
 		}
