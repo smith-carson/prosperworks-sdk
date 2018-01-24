@@ -90,7 +90,8 @@ class BareResource
 
                 case 'contact_type_id':
                     $contactTypes = CRM::fieldList('contactType');
-                    $this->contact_type = $contactTypes[$entry['contact_type_id']];
+                    if (!empty($entry['contact_type_id']))
+                        $this->contact_type = $contactTypes[$entry['contact_type_id']];
                     break;
 
                 default:
