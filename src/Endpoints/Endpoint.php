@@ -55,19 +55,19 @@ class Endpoint extends BaseEndpoint
 		$relations = [];
 		$entriesGenerator = function($entries) use (&$relations) {
 			foreach ($entries as $entry) {
-				$tm2id = null;
+				//$tm2id = null;
 				
-				foreach ($entry['custom_fields'] as $customfield) {
+				/*foreach ($entry['custom_fields'] as $customfield) {
 					if (is_object($customfield)) {
 						if ($customfield->name == "TM2 ID") {
 							$tm2id = $customfield->getValue();
 							break;
 						}
 					}
-				}
+				}*/
 				
 				if (isset($entry['relations'])) {
-					$relations[$tm2id] = $entry['relations'];
+					//$relations[$tm2id] = $entry['relations'];
 					unset($entry['relations']);
 				}
 				
@@ -77,7 +77,7 @@ class Endpoint extends BaseEndpoint
 		
 		$results = $this->request('post', $this->entriesJsonifier($entriesGenerator($entries)));
 		
-		$pwlinkedRelations = [];
+		/*$pwlinkedRelations = [];
 		
 		foreach ($results as $result) {
 			if ( !empty($result->custom_fields['TM2 ID']) && !empty($relations[$result->custom_fields['TM2 ID']->getValue()]) ) {
@@ -85,7 +85,7 @@ class Endpoint extends BaseEndpoint
 			}
 		}
 		
-		$this->relatedBatch()->create($pwlinkedRelations);
+		$this->relatedBatch()->create($pwlinkedRelations);*/
 		
         return $results;
     }

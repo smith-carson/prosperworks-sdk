@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Client;
 use ProsperWorks\Resources\BareResource;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * References related resource calls.
@@ -80,7 +81,15 @@ class RelatedEndpoint extends BaseEndpoint
      */
     public function delete(int $id, string $type)
     {
-        return $this->request('delete', null, ['json' => ['resource' => compact('id', 'type')]]);
+		try {
+			return $this->request('delete', null, ['json' => ['resource' => compact('id', 'type')]]);
+		} catch ( GuzzleHttp\Exception\ClientException $e ) {
+			$message = $e->getMessage();
+			
+			if (strpos($message, "Resources are not related") !== false) {
+				return 1;
+			}
+		}
     }
 
     /**

@@ -100,6 +100,7 @@ abstract class BaseEndpoint
                 echo strtoupper($method) . " $this->uri/$path\n";
             }
             
+            //file_put_contents("/tmp/requests.log", strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n", FILE_APPEND);
             try {
 				$response = $this->client->$method("$this->uri/$path", $options);
 			} catch (\RuntimeException $e) {
@@ -111,6 +112,11 @@ abstract class BaseEndpoint
 				foreach ($transaction['request']->getHeaders() as $header) {
 					$error .= print_r($header, true);
 				}
+				
+				if (strpos($error, "Invalid request: Resources are not related") !== false) {
+					return 1;
+				}
+				
 				//file_put_contents("/tmp/pwsync.log","Sync exception: " . $error, FILE_APPEND);
 			}
 			
@@ -147,7 +153,7 @@ abstract class BaseEndpoint
                     } elseif (Config::debugLevel() >= Config::DEBUG_BASIC) {
                         echo strtoupper($method) . " $this->uri/$path\n";
                     }
-					
+					//file_put_contents("/tmp/requests.log", strtoupper($method) . " $this->uri/$path " . ($options ? json_encode($options, JSON_PRETTY_PRINT) : '') . "\n", FILE_APPEND);
                     return $this->client->{"{$method}Async"}("$this->uri/$path", $options);
                 };
             }
