@@ -118,9 +118,10 @@ abstract class BaseEndpoint
 				}
 				
 				//file_put_contents("/tmp/pwsync.log","Sync exception: " . $error, FILE_APPEND);
-			}
-			
-            RateLimit::do()->pushRequest();
+                throw $e;
+            } finally {
+                RateLimit::do()->pushRequest();
+            }
             return $this->processResponse($response);
         }
     }
