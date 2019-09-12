@@ -136,7 +136,7 @@ class Endpoint extends BaseEndpoint
         //FIXME there's some bug on the PW API that returns fewer entries than the requested...
         //so we're creating a margin to define when it should be safe to stop requesting pages
         $safeMargin = ($size > 20)? 0.9 : 0.5; //trial-and-error-based guess
-        $safeLimit = floor($params['page_size'] * $safeMargin);
+        $safeLimit = max(floor($params['page_size'] * $safeMargin), 1);
 
         $entries = [];
         do {
