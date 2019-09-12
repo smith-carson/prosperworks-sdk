@@ -42,6 +42,11 @@ class CustomField
         $values = [];
         $field = CRM::fieldList('customFieldDefinition', $idOrName, true);
 
+        // This hack is required to avoid a single object breaking sizeof below.
+        if (is_object($field)) {
+            $field = [$field];
+        }
+
         switch (sizeof($field)) {
             case 1:
                 if (is_array($field)) {

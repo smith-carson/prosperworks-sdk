@@ -133,11 +133,22 @@ class Endpoint extends BaseEndpoint
         $params['page_number'] = $page ?? 1;
         $params['page_size'] = ($size > 200)? 200 : $size;
 
+        //FIXME there's some bug on the PW API that returns fewer entries than the requested...
+        //so we're creating a margin to define when it should be safe to stop requesting pages
+        $safeMargin = ($size > 20)? 0.9 : 0.5; //trial-and-error-based guess
+        $safeLimit = floor($params['page_size'] * $safeMargin);
+
         $entries = [];
         do {
             $results = $this->request('post', 'search', ['json' => $params]);
+
+            // This hack is required to avoid a single object breaking sizeof below.
+            if (is_object($results)) {
+                $results = [$results];
+            }
+
             $entries = array_merge($entries, is_object($results)? [$results] : $results);
-        } while ($allPages && ++$params['page_number']);
+        } while ($allPages && sizeof($results) >= $safeLimit && ++$params['page_number']);
 
         return $entries;
     }
