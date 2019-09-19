@@ -75,7 +75,7 @@ class CustomField
 
         //validating $resource and options, if available
         if (is_array($value) && $this->type != "MultiSelect") {
-			throw new InvalidArg("Invalid multiple values for field $name that is not a MultiSelect field.");
+			throw new InvalidArg("Invalid multiple values for field $field->name ($field->data_type) that is not a MultiSelect field.");
 		}
 		
         if ($resource && !in_array($resource, $this->resources)) {
