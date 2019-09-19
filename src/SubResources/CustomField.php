@@ -74,7 +74,7 @@ class CustomField
         $this->options = $field->options ?? [];
 
         //validating $resource and options, if available
-        if (is_array($value) && $this->type != "MultiSelect") {
+        if (is_array($value) && !in_array($this->type, ['MultiSelect', 'Connect'])) { // XXX: Connect type fields can come with an array for some reason.
 			throw new InvalidArg("Invalid multiple values for field $field->name ($field->data_type) that is not a MultiSelect field.");
 		}
 		
