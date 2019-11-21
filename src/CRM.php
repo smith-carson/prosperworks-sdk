@@ -77,9 +77,7 @@ abstract class CRM
 	static $container;
 	
     public static function client()
-    {
-        static $client;
-        
+    {        
         self::$container = [];
 		$history = Middleware::history(self::$container);
 		
@@ -87,18 +85,17 @@ abstract class CRM
 		// Add the history middleware to the handler stack.
 		$stack->push($history);
         
-        if (!$client) {
-            $client = new Client([
-                'base_uri' => 'https://api.prosperworks.com/developer_api/v1/',
-                'headers' => [
-                    'X-PW-Application' => 'developer_api',
-                    'X-PW-UserEmail' => Config::email(),
-                    'X-PW-AccessToken' => Config::token(),
-                    'Content-Type' => 'application/json'
-                ],
-                'handler' => $stack
-            ]);
-        }
+        $client = new Client([
+            'base_uri' => 'https://api.prosperworks.com/developer_api/v1/',
+            'headers' => [
+                'X-PW-Application' => 'developer_api',
+                'X-PW-UserEmail' => Config::email(),
+                'X-PW-AccessToken' => Config::token(),
+                'Content-Type' => 'application/json'
+            ],
+            'handler' => $stack
+        ]);
+        
         return $client;
     }
 
