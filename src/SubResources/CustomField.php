@@ -84,7 +84,7 @@ class CustomField
         
         if ($this->options && $value) {
 			if (!is_array($value)) $value = [$value];
-			
+
 			foreach ($value as $val) {
 				if (!is_numeric($val)) {
 					if ($val == "") {
@@ -99,7 +99,7 @@ class CustomField
 					$id = $val;
 				}
 				
-				if ( $valueName !== "" && (!$id || !$valueName) ) {
+				if ( $valueName !== "" && (!$id || $valueName === false) ) {
 					$name = ($resource ? "$resource." : '') . $idOrName;
 					$options = implode(', ', $this->options);
 					
