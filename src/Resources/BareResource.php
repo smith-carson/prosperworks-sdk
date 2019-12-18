@@ -82,7 +82,9 @@ class BareResource
                     $finalFields = [];
                     foreach ($entry['custom_fields'] as $field) {
                         $id = $field->custom_field_definition_id;
-                        $finalFields[$fields[$id]] = new CustomField($id, $field->value);
+                        if (isset($fields[$id])) {
+                            $finalFields[$fields[$id]] = new CustomField($id, $field->value);
+                        }
                     }
                     $this->custom_fields_raw = $entry['custom_fields'];
                     $this->custom_fields = $finalFields;
