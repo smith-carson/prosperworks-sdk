@@ -146,7 +146,7 @@ abstract class CRM
      */
     public static function fieldList(string $resource, $search = null, bool $detailed = false)
     {
-        $keyBase = "prosperworks::$resource::";
+        $keyBase = 'prosperworks::'.$resource.'::'.Config::email().'::';
         $key = $keyBase . ($detailed ? 'details' : 'list');
 
         $lifetime = 60 * 60; //one hour at least
@@ -156,13 +156,13 @@ abstract class CRM
                 return CRM::getResource($resource)->all();
             }, $lifetime);
 
-            if ($resource == 'activityType') { //yet another API inconsistency to deal with
+            if ($resource === 'activityType') { //yet another API inconsistency to deal with
                 $list = array_merge($list->user, $list->system);
             }
 
             $result = array_column($list, $detailed ? null : 'name', 'id');
 
-            if ($detailed && $resource == 'customFieldDefinition') {
+            if ($detailed && $resource === 'customFieldDefinition') {
                 array_walk($result, function (&$field) {
                     if (isset($field->options) && $field->options) {
                         $field->options = array_column($field->options, 'name', 'id');
