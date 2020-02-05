@@ -42,26 +42,29 @@ class CustomField
         $values = [];
         $field = CRM::fieldList('customFieldDefinition', $idOrName, true);
 
-        switch (sizeof($field)) {
-            case 1:
-                if (is_array($field)) {
-                    $field = current($field); //gets the first entry directly
-                }
-                break;
+        if (is_array($field)) {
+            switch (sizeof($field)) {
+                case 1:
+                    if (is_array($field)) {
+                        $field = current($field); //gets the first entry directly
+                    }
+                    break;
 
-            case 0:
-                throw new InvalidArg("Custom Field not found: $idOrName");
+                case 0:
+                    throw new InvalidArg("Custom Field not found: $idOrName");
 
-            default: //will only happen on string identifiers (name)
-                if ($resource) {
-                    //returns the first item found with the resource name in the available list
-                    $field = array_filter($field, function ($f) use ($resource) {
-                        return in_array($resource, $f->available_on);
-                    });
-                } else {
-                    throw new InvalidArg("There's more than one '$idOrName' field. To distinguish we need the resource name as well.");
-                }
+                default: //will only happen on string identifiers (name)
+                    if ($resource) {
+                        //returns the first item found with the resource name in the available list
+                        $field = array_filter($field, function ($f) use ($resource) {
+                            return in_array($resource, $f->available_on);
+                        });
+                    } else {
+                        throw new InvalidArg("There's more than one '$idOrName' field. To distinguish we need the resource name as well.");
+                    }
+            }
         }
+
         $this->custom_field_definition_id = $field->id;
         $this->name = $field->name;
         $this->type = $field->data_type;

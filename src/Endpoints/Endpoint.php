@@ -142,7 +142,7 @@ class Endpoint extends BaseEndpoint
         do {
             $results = $this->request('post', 'search', ['json' => $params]);
             $entries = array_merge($entries, is_object($results)? [$results] : $results);
-        } while ($allPages && sizeof($results) >= $safeLimit && ++$params['page_number']);
+        } while ($allPages && is_array($results) && sizeof($results) >= $safeLimit && ++$params['page_number']);
 
         return $entries;
     }
