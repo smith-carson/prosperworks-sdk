@@ -45,9 +45,7 @@ class CustomField
         if (is_array($field)) {
             switch (sizeof($field)) {
                 case 1:
-                    if (is_array($field)) {
-                        $field = current($field); //gets the first entry directly
-                    }
+                    $field = current($field); //gets the first entry directly
                     break;
 
                 case 0:
@@ -72,8 +70,8 @@ class CustomField
         $this->options = $field->options ?? [];
 
         //validating $resource and options, if available
-        if (is_array($value) && $this->type != "MultiSelect") {
-			throw new InvalidArg("Invalid multiple values for field $name that is not a MultiSelect field.");
+        if (is_array($value) && $this->type != "MultiSelect" && $this->type != "Connect") {
+			throw new InvalidArg('Invalid multiple values for field ' . $field->name . ' that is not a supported field type (type: ' . $this->type . ')');
 		}
 		
         if ($resource && !in_array($resource, $this->resources)) {
@@ -107,7 +105,7 @@ class CustomField
 				}
 			}
 			
-            if ($this->type == "MultiSelect") {
+            if ($this->type == "MultiSelect" || $this->type == "Connect") {
 				$this->value = $values;
 			} else {
 				$this->value = $values[0];
@@ -119,7 +117,7 @@ class CustomField
 	
 	public function getValue() {
 		if (count($this->options) > 0) {
-			if ($this->type == "MultiSelect") {
+			if ($this->type == "MultiSelect" || $this->type == "Connect") {
 				$values = [];
 				foreach ($this->value as $val) {
 					$values[] = $this->options[$val];
