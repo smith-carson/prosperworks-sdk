@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks;
+<?php
+
+namespace ProsperWorks;
 
 /**
  * Singleton class that defines Rate Limit rules, usable across Resources.

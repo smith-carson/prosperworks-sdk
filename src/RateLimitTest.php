@@ -1,4 +1,5 @@
 <?php
+
 require "RateLimit.php";
 use ProsperWorks\RateLimit;
 

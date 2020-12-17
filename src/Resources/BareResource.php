@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\Resources;
+<?php
+
+namespace ProsperWorks\Resources;
 
 use ProsperWorks\CRM;
 use ProsperWorks\SubResources\Address;

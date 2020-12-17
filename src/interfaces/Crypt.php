@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\Interfaces;
+<?php
+
+namespace ProsperWorks\Interfaces;
 
 interface Crypt
 {

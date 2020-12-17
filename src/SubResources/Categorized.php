@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\SubResources;
+<?php
+
+namespace ProsperWorks\SubResources;
 
 /**
  * Class for simple resources that have categories.

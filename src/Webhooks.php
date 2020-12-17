@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks;
+<?php
+
+namespace ProsperWorks;
 
 use GuzzleHttp\Exception\ClientException;
 use ProsperWorks\Endpoints\BaseEndpoint;

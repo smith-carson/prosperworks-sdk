@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\Endpoints;
+<?php
+
+namespace ProsperWorks\Endpoints;
 
 use ProsperWorks\Resources\BareResource;
 

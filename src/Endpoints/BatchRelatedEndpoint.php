@@ -1,9 +1,12 @@
-<?php namespace ProsperWorks\Endpoints;
+<?php
+
+namespace ProsperWorks\Endpoints;
 
 use GuzzleHttp\Client;
 use ProsperWorks\SubResources\Relation;
 
-class BatchRelatedEndpoint extends BaseEndpoint {
+class BatchRelatedEndpoint extends BaseEndpoint
+{
 
     /** @noinspection PhpMissingParentConstructorInspection
      * @param string $uri

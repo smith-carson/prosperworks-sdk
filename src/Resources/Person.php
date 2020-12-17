@@ -1,4 +1,5 @@
 <?php
+
 namespace ProsperWorks\Resources;
 
 use ProsperWorks\SubResources\Address;

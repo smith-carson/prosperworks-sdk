@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\SubResources;
+<?php
+
+namespace ProsperWorks\SubResources;
 
 /**
  * URL subresource. Is able to guess the category for Social URLs.\SubResources

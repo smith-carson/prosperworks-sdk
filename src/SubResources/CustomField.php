@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks\SubResources;
+<?php
+
+namespace ProsperWorks\SubResources;
 
 use InvalidArgumentException as InvalidArg;
 use ProsperWorks\CRM;

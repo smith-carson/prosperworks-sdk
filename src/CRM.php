@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks;
+<?php
+
+namespace ProsperWorks;
 
 use Doctrine\Common\Inflector\Inflector;
 use GuzzleHttp\Client;

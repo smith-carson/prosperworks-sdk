@@ -1,4 +1,6 @@
-<?php namespace ProsperWorks;
+<?php
+
+namespace ProsperWorks;
 
 use ProsperWorks\Interfaces\Cache;
 use ProsperWorks\Interfaces\Crypt;
