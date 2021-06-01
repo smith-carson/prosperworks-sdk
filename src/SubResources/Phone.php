@@ -14,8 +14,8 @@ class Phone extends Categorized
 
     public $number;
 
-    const MOBILE = 'Mobile';
-    const HOME = 'Home';
+    const MOBILE = 'mobile';
+    const HOME = 'home';
 
     /** @deprecated */
     const PERSONAL = 'Personal';
