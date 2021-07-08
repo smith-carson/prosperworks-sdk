@@ -178,7 +178,7 @@ abstract class CRM
 
         if ($search) {
             if (is_numeric($search)) {
-                return $array[$search] ?? null;
+                return [ $array[$search] ] ?? null;
             } else {
                 if ($detailed) {
                     return array_filter($array, function ($f) use ($search) { return $f->name == $search; }) ?? null;
