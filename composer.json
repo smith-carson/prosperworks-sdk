@@ -25,7 +25,7 @@
 
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.0",
+        "php": "^7.0 || ^8.0",
         "guzzlehttp/guzzle": "^6.3",
         "doctrine/inflector": "^1.2"
     },
