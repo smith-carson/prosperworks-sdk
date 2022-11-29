@@ -73,20 +73,20 @@ abstract class CRM
     const RES_TASK        = 'Task';
     const RES_PROJECT     = 'Project';
     const RES_ACTIVITY    = 'Activity';
-	
+
 	static $container;
-	
+
     public static function client()
     {
         static $client;
-        
+
         self::$container = [];
 		$history = Middleware::history(self::$container);
-		
+
 		$stack = HandlerStack::create();
 		// Add the history middleware to the handler stack.
 		$stack->push($history);
-        
+
         if (!$client) {
             $client = new Client([
                 'base_uri' => 'https://api.prosperworks.com/developer_api/v1/',
@@ -162,6 +162,11 @@ abstract class CRM
             if ($resource == 'activityType') { //yet another API inconsistency to deal with
                 $list = array_merge($list->user, $list->system);
             }
+
+            // API does not return single element array when only one object in the response.
+            // The code after this assumes array and this is not always the case.
+            // This definitely requires PHP7
+            if(!is_array($list)) { $list = [$list]; }
 
             $result = array_column($list, $detailed ? null : 'name', 'id');
 
