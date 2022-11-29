@@ -112,7 +112,7 @@ class Webhooks extends BaseEndpoint
             $response[] = $result->id;
         }
 
-        return (sizeof($response) == 1)? $response[0] : $response;
+        return (is_array($response) && sizeof($response) == 1) ? $response[0] : $response;
     }
 
     public function list(int $id = null): array

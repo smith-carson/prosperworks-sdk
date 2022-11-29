@@ -42,26 +42,27 @@ class CustomField
         $values = [];
         $field = CRM::fieldList('customFieldDefinition', $idOrName, true);
 
-        switch (sizeof($field)) {
-            case 1:
-                if (is_array($field)) {
+        if (is_array($field)) {
+            switch (sizeof($field)) {
+                case 1:
                     $field = current($field); //gets the first entry directly
-                }
-                break;
+                    break;
 
-            case 0:
-                throw new InvalidArg("Custom Field not found: $idOrName");
+                case 0:
+                    throw new InvalidArg("Custom Field not found: $idOrName");
 
-            default: //will only happen on string identifiers (name)
-                if ($resource) {
-                    //returns the first item found with the resource name in the available list
-                    $field = array_filter($field, function ($f) use ($resource) {
-                        return in_array($resource, $f->available_on);
-                    });
-                } else {
-                    throw new InvalidArg("There's more than one '$idOrName' field. To distinguish we need the resource name as well.");
-                }
+                default: //will only happen on string identifiers (name)
+                    if ($resource) {
+                        //returns the first item found with the resource name in the available list
+                        $field = array_filter($field, function ($f) use ($resource) {
+                            return in_array($resource, $f->available_on);
+                        });
+                    } else {
+                        throw new InvalidArg("There's more than one '$idOrName' field. To distinguish we need the resource name as well.");
+                    }
+            }
         }
+
         $this->custom_field_definition_id = $field->id;
         $this->name = $field->name;
         $this->type = $field->data_type;
@@ -69,8 +70,8 @@ class CustomField
         $this->options = $field->options ?? [];
 
         //validating $resource and options, if available
-        if (is_array($value) && $this->type != "MultiSelect") {
-			throw new InvalidArg("Invalid multiple values for field $name that is not a MultiSelect field.");
+        if (is_array($value) && $this->type != "MultiSelect" && $this->type != "Connect") {
+			throw new InvalidArg('Invalid multiple values for field ' . $field->name . ' that is not a supported field type (type: ' . $this->type . ')');
 		}
 		
         if ($resource && !in_array($resource, $this->resources)) {
@@ -104,7 +105,7 @@ class CustomField
 				}
 			}
 			
-            if ($this->type == "MultiSelect") {
+            if ($this->type == "MultiSelect" || $this->type == "Connect") {
 				$this->value = $values;
 			} else {
 				$this->value = $values[0];
@@ -116,7 +117,7 @@ class CustomField
 	
 	public function getValue() {
 		if (count($this->options) > 0) {
-			if ($this->type == "MultiSelect") {
+			if ($this->type == "MultiSelect" || $this->type == "Connect") {
 				$values = [];
 				foreach ($this->value as $val) {
 					$values[] = $this->options[$val];
